@@ -146,7 +146,7 @@
         function createNewGameRoom(roomName){
 
             emptyMessage.push("Start Game");
-            
+
             db2.ref().push({
                 roomName: roomName,
                 playerCount: 1,
@@ -159,22 +159,37 @@
         }
 
         db2.ref().on("value", function(snapshot){
-            console.log(snapshot.val());
-            if(snapshot.val() === null){
-                console.log("null firebase");
 
-                gameRooms.push(gameRoom);
 
-                db2.ref().push({
-                    roomName: gameRoom.roomName,
-                    playerCount: gameRoom.playerCount,
-                    player1Wins: gameRoom.player1Wins,
-                    player2Wins: gameRoom.player2Wins,
-                    messages: JSON.stringify(emptyMessage),
-                    player1Choice: gameRoom.player1Choice,
-                    player2Choice: gameRoom.player2Choice
-                });
-            }
+            snapshot.forEach(function(childSnapshot){
+                var room = childSnapshot.val();
+                console.log(room.roomName);
+                console.log(childSnapshot.val());
+
+                var roomButton = $("<button>");
+                $(roomButton).addClass("btn btn-primary");
+                $(roomButton).text(room.roomName);
+                 $("#joinRoom").append(roomButton);
+            });    
+
+
+            // gameRooms.push(gameRoom);
+
+            // if(snapshot.val() === null){
+            //     console.log("null firebase");
+
+            //     db2.ref().push({
+            //         roomName: gameRoom.roomName,
+            //         playerCount: gameRoom.playerCount,
+            //         player1Wins: gameRoom.player1Wins,
+            //         player2Wins: gameRoom.player2Wins,
+            //         messages: JSON.stringify(emptyMessage),
+            //         player1Choice: gameRoom.player1Choice,
+            //         player2Choice: gameRoom.player2Choice
+            //     });
+            // }
+
+
         })
 
         $("#createGameRoom").on("click", function(event){
