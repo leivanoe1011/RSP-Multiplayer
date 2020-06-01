@@ -4,11 +4,222 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+    <!-- firebase -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-database.js"></script> 
+
+    
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <!-- custom -->
+    <link rel="stylesheet" href="assets/css/style.css">
+
     <title>RSP</title>
 </head>
 <body>
+
+    <!-- Nav -->
+    <div class="container">
+
+    </div>
+
+
+    <!-- Join Game Room -->
+    <div id="gameRoom" class="container">
+        <!-- Begin Row -->
+        <div class="row">
+            <h3>Create a New Game Room</h3>
+        </div>
+        <!-- End Row -->
+
+        <!-- Begin Row -->
+        <div class="row">   
+            <form>
+                <div class="form-group">
+                    <label for="choice">Room Name</label>
+                    <input type="text" class="form-control" id="roomName">
+                </div>
+
+                <button id="createGameRoom" type="submit" class="btn btn-primary">New Game Room</button>
+                
+            </form>
+        </div>
+        <!-- End Row -->
+
+        <!-- Begin Row -->
+        <div class="row">
+            <h3>Join Room</h3>
+        </div>
+        <!-- End Row -->
+
+        <!-- Begin Row -->
+        <div class="row" id="joinRoom">
+
+        </div>
+        <!-- End Row -->
+
+    </div>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
+
+    <!-- Input form -->
+    <div class="container" id="choiceContainer">
+        <form>
+            <div class="form-group">
+                <label for="choice">Select P, S, or R</label>
+                <input type="text" class="form-control" id="choice">
+            </div>
+
+            <button id="submit" type="submit" class="btn btn-primary">Submit</button>
+
+        </form>
+
+    </div>
+
+    <!-- Loading Message -->
+    <div class="container" id="loadingContainer">
+
+       
+
+    </div>
+
+
+    <!-- Chat -->
+    <div class="container" id="chatContainer">
+        <form>
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Example textarea</label>
+                <textarea id="chatMessage" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+              </div>
+
+            <button id="chat" type="submit" class="btn btn-primary">Chat</button>
+
+        </form>
+    </div>
+
+
+    <!-- Jquery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+    <script>
+    
+        var gameOptions = ["p","s","r"];
+
+        var gameRooms = [];
+
+        var emptyMessage = [""]
+
+        var gameRoom = {
+            roomName:"",
+            playerCount: 0,
+            player1Wins: 0,
+            player2Wins: 0,
+            messages: [],
+            player1Choice: "",
+            player2Choice: ""
+        }
+
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyD7464x7kygEx9awwunT4uAf38Xm3KLvMY",
+            authDomain: "rockpaperscissorgame-2c750.firebaseapp.com",
+            databaseURL: "https://rockpaperscissorgame-2c750.firebaseio.com",
+            projectId: "rockpaperscissorgame-2c750",
+            storageBucket: "rockpaperscissorgame-2c750.appspot.com",
+            messagingSenderId: "105753591151",
+            appId: "1:105753591151:web:ba2b1592f51de18b0bbc9a",
+            measurementId: "G-7T33DQ81BS"
+        };
+        // Initialize Firebase
+        var app = firebase.initializeApp(firebaseConfig, 'app');
+
+        var db2 = firebase.database(app);
+
+
+        function createNewGameRoom(){
+
+        }
+
+        db2.ref().on("value", function(snapshot){
+            console.log(snapshot.val());
+            if(snapshot.val() === null){
+                console.log("null firebase");
+
+                gameRooms.push(gameRoom);
+
+                db2.ref().push({
+                    roomName: gameRoom.roomName,
+                    playerCount: gameRoom.playerCount,
+                    player1Wins: gameRoom.player1Wins,
+                    player2Wins: gameRoom.player2Wins,
+                    messages: JSON.stringify(emptyMessage),
+                    player1Choice: gameRoom.player1Choice,
+                    player2Choice: gameRoom.player2Choice
+                });
+            }
+        })
+
+        $("#submit").on("click", function(event){
+            event.preventDefault();
+
+            var choice = $("#choice").val();
+
+            choice = choice.toLowerCase();
+
+            var isChoiceValid = gameOptions.includes(choice);
+
+            if(!isChoiceValid){
+                alert("Please be sure to select an option between P(paper), S(scissor), R(rock)");
+                $("#choice").val(' ');
+                return;
+            }
+
+            $("#submit").addClass("disabled");
+
+            var createSpinner = $("<div>");
+            $(createSpinner).addClass("spinner-border");
+            $(createSpinner).attr("role", "status");
+
+            var loading = $("<span>");
+            $(loading).addClass("sr-only");
+            $(loading).text("Loading...");
+            
+            $(createSpinner).append(loading);
+            $("#loadingContainer").append(createSpinner);
+
+            setTimeout(function(){ 
+                console.log("Hello"); 
+                $("#loadingContainer").empty();
+                $("#submit").removeClass("disabled");
+                $("#choice").val(' ');
+            }, 5000);
+
+        })
+
+
+        // document.getElementById("choice").addEventListener("keydown", function(event){
+        //     console.log("In keyup function");
+        //     console.log(event.which);
+        //     console.log(event.keyCode);
+        //     console.log(event.key);
+        // })
+
+
+        $(document).ready(function(){
+
+            // $("#chatContainer").hide();
+            // $("#loadingContainer").hide();
+            // $("#choiceContainer").hide();
+
+        })
+
+    </script>
 </body>
 </html>
