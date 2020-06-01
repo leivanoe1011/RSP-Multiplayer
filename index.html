@@ -143,8 +143,19 @@
         var db2 = firebase.database(app);
 
 
-        function createNewGameRoom(){
+        function createNewGameRoom(roomName){
 
+            emptyMessage.push("Start Game");
+            
+            db2.ref().push({
+                roomName: roomName,
+                playerCount: 1,
+                player1Wins: 0,
+                player2Wins: 0,
+                messages: JSON.stringify(emptyMessage),
+                player1Choice: gameRoom.player1Choice,
+                player2Choice: gameRoom.player2Choice
+            });
         }
 
         db2.ref().on("value", function(snapshot){
@@ -165,6 +176,21 @@
                 });
             }
         })
+
+        $("#createGameRoom").on("click", function(event){
+            event.preventDefault();
+            
+            console.log("create game room");
+            
+            var gameRoomName = $("#roomName").val();
+            
+            console.log(gameRoomName);
+            
+            createNewGameRoom(gameRoomName);
+
+            // $("#gameRoom").hide();
+        })
+
 
         $("#submit").on("click", function(event){
             event.preventDefault();
