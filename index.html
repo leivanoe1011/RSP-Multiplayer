@@ -88,6 +88,12 @@
 
     <!-- Chat -->
     <div class="container" id="chatContainer">
+
+        <div class="row">
+            <div id="loadChat" class="col-sm-12 col-lg-8">
+
+            </div>
+        </div>
         <form>
             <div class="form-group">
                 <label for="exampleFormControlTextarea1">Example textarea</label>
@@ -115,6 +121,10 @@
         var gameRooms = [];
 
         var emptyMessage = [""]
+
+        
+        var currentRoomKey = sessionStorage.getItem("gameRoom");
+
 
         var gameRoom = {
             roomName:"",
@@ -160,16 +170,18 @@
 
         db2.ref().on("value", function(snapshot){
 
-
             snapshot.forEach(function(childSnapshot){
                 var room = childSnapshot.val();
-                console.log(room.roomName);
-                console.log(childSnapshot.val());
+                var key = childSnapshot.key;
+
+                // console.log(room);
 
                 var roomButton = $("<button>");
-                $(roomButton).addClass("btn btn-primary");
+                $(roomButton).addClass("btn btn-primary room_selected");
+                $(roomButton).attr("data-roomkey", key);
+
                 $(roomButton).text(room.roomName);
-                 $("#joinRoom").append(roomButton);
+                $("#joinRoom").append(roomButton);
             });    
 
 
@@ -188,9 +200,29 @@
             //         player2Choice: gameRoom.player2Choice
             //     });
             // }
-
+            
 
         })
+
+
+        $(document).on("click", ".room_selected", function(event){
+
+            event.preventDefault();
+
+            console.log($(this).text());
+
+            console.log(currentRoomKey);
+
+            // Variable created when the app loads
+            currentRoomKey = $(this).data("roomkey");
+
+            sessionStorage.setItem("gameRoom", currentRoomKey);
+
+            console.log(currentRoomKey);
+
+             $("#gameRoom").hide();
+        });
+
 
         $("#createGameRoom").on("click", function(event){
             event.preventDefault();
@@ -255,10 +287,34 @@
 
         $(document).ready(function(){
 
-            // $("#chatContainer").hide();
-            // $("#loadingContainer").hide();
-            // $("#choiceContainer").hide();
+            console.log(currentRoomKey);
+            
+            if(currentRoomKey !== null){
+                $("#gameRoom").hide();
+            }
 
+            // console.log(db2.ref().child(currentRoomKey).getItem());
+            // console.log(db2.ref().child(currentRoomKey));
+            // console.log(db2.ref(currentRoomKey))
+            // $(loadChat).append();
+
+            // -M8kyngHx07kIaFcDJk9
+            // console.log(db2.ref().orderByKey())
+            // console.log(db2.child('-M8kyngHx07kIaFcDJk9'));
+
+            db2.ref('-M8kyngHx07kIaFcDJk9').once('value').then(function(snapshot){
+                console.log(snapshot.val().messages)
+                var messages = snapshot.val().messages
+
+                var parsedMessages = JSON.parse(messages);
+
+                console.log(parsedMessages);
+            })
+
+            // console.log(db2.ref('-M8kyngHx07kIaFcDJk9'))
+
+            // console.log(db2.getReference(currentRoomKey))
+           
         })
 
     </script>
