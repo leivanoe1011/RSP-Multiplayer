@@ -148,6 +148,7 @@
             appId: "1:105753591151:web:ba2b1592f51de18b0bbc9a",
             measurementId: "G-7T33DQ81BS"
         };
+
         // Initialize Firebase
         var app = firebase.initializeApp(firebaseConfig, 'app');
 
@@ -158,7 +159,7 @@
 
             emptyMessage.push("Start Game");
 
-            db2.ref().push({
+            var myRef = db2.ref().push({
                 roomName: roomName,
                 playerCount: 1,
                 player1Wins: 0,
@@ -167,43 +168,59 @@
                 player1Choice: gameRoom.player1Choice,
                 player2Choice: gameRoom.player2Choice
             });
+            
+            myRef.push();
+
+            // After the Object is created, we get the Key
+            var key = myRef.getKey();
+
+
+            currentRoomKey = key;
+
+
+            console.log("Create New Room Key " + key);
+ 
         }
 
-        db2.ref().on("value", function(snapshot){
 
-            snapshot.forEach(function(childSnapshot){
-                var room = childSnapshot.val();
-                var key = childSnapshot.key;
+        function createRoomButtons(){
+            db2.ref().on("value", function(snapshot){
 
-                // console.log(room);
+                snapshot.forEach(function(childSnapshot){
+                    var room = childSnapshot.val();
+                    var key = childSnapshot.key;
 
-                var roomButton = $("<button>");
-                $(roomButton).addClass("btn btn-primary room_selected");
-                $(roomButton).attr("data-roomkey", key);
+                    // console.log(room);
 
-                $(roomButton).text(room.roomName);
-                $("#joinRoom").append(roomButton);
-            });    
+                    var roomButton = $("<button>");
+                    $(roomButton).addClass("btn btn-primary room_selected");
+                    $(roomButton).attr("data-roomkey", key);
+
+                    $(roomButton).text(room.roomName);
+                    $("#joinRoom").append(roomButton);
+                });    
 
 
-            // gameRooms.push(gameRoom);
+                // gameRooms.push(gameRoom);
 
-            // if(snapshot.val() === null){
-            //     console.log("null firebase");
+                // if(snapshot.val() === null){
+                //     console.log("null firebase");
 
-            //     db2.ref().push({
-            //         roomName: gameRoom.roomName,
-            //         playerCount: gameRoom.playerCount,
-            //         player1Wins: gameRoom.player1Wins,
-            //         player2Wins: gameRoom.player2Wins,
-            //         messages: JSON.stringify(emptyMessage),
-            //         player1Choice: gameRoom.player1Choice,
-            //         player2Choice: gameRoom.player2Choice
-            //     });
-            // }
-            
+                //     db2.ref().push({
+                //         roomName: gameRoom.roomName,
+                //         playerCount: gameRoom.playerCount,
+                //         player1Wins: gameRoom.player1Wins,
+                //         player2Wins: gameRoom.player2Wins,
+                //         messages: JSON.stringify(emptyMessage),
+                //         player1Choice: gameRoom.player1Choice,
+                //         player2Choice: gameRoom.player2Choice
+                //     });
+                // }
 
-        })
+
+            });
+        }
+       
 
 
         $(document).on("click", ".room_selected", function(event){
@@ -242,7 +259,7 @@
             // If you create a new Room, then you're player 1
             sessionStorage.setItem("playerId", "Player1");
 
-            // $("#gameRoom").hide();
+            $("#gameRoom").hide();
         })
 
 
@@ -289,8 +306,6 @@
 
         })
 
-
-
         
         $(document).ready(function(){
 
@@ -298,7 +313,6 @@
             
             if(currentRoomKey !== null){
                 $("#gameRoom").hide();
-
 
                 // Also need code to listen to that specific room when any value changes
 
@@ -313,6 +327,9 @@
                     console.log(parsedMessages);
                 })
             }
+
+            // Create Room Buttons
+            createRoomButtons();
            
         })
 
