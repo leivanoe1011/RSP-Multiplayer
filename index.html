@@ -121,9 +121,10 @@
         var gameRooms = [];
 
         var emptyMessage = [""]
-
-        
+   
         var currentRoomKey = sessionStorage.getItem("gameRoom");
+
+        var playerId = sessionStorage.getItem("playerId");
 
 
         var gameRoom = {
@@ -218,6 +219,9 @@
 
             sessionStorage.setItem("gameRoom", currentRoomKey);
 
+            // If you're joining a room, then you're player 2
+            sessionStorage.setItem("playerId", "Player2");
+
             console.log(currentRoomKey);
 
              $("#gameRoom").hide();
@@ -235,10 +239,14 @@
             
             createNewGameRoom(gameRoomName);
 
+            // If you create a new Room, then you're player 1
+            sessionStorage.setItem("playerId", "Player1");
+
             // $("#gameRoom").hide();
         })
 
 
+        // Loads answer from user to Firebase
         $("#submit").on("click", function(event){
             event.preventDefault();
 
@@ -246,14 +254,19 @@
 
             choice = choice.toLowerCase();
 
+            // Returns true or false
             var isChoiceValid = gameOptions.includes(choice);
 
+            // When user answer is not valid, notify them
             if(!isChoiceValid){
                 alert("Please be sure to select an option between P(paper), S(scissor), R(rock)");
                 $("#choice").val(' ');
+
+                // Go back to the APP when the answer is not valid
                 return;
             }
 
+            // Grey out the submit button when the answer has been validated
             $("#submit").addClass("disabled");
 
             var createSpinner = $("<div>");
@@ -277,6 +290,33 @@
         })
 
 
+
+        
+        $(document).ready(function(){
+
+            console.log(currentRoomKey);
+            
+            if(currentRoomKey !== null){
+                $("#gameRoom").hide();
+
+
+                // Also need code to listen to that specific room when any value changes
+
+                // Only get the messages from the room if the user has a key
+                // get the messages for the specific room below
+                db2.ref(currentRoomKey).once('value').then(function(snapshot){
+                    console.log(snapshot.val().messages)
+                    var messages = snapshot.val().messages
+
+                    var parsedMessages = JSON.parse(messages);
+
+                    console.log(parsedMessages);
+                })
+            }
+           
+        })
+
+
         // document.getElementById("choice").addEventListener("keydown", function(event){
         //     console.log("In keyup function");
         //     console.log(event.which);
@@ -284,38 +324,6 @@
         //     console.log(event.key);
         // })
 
-
-        $(document).ready(function(){
-
-            console.log(currentRoomKey);
-            
-            if(currentRoomKey !== null){
-                $("#gameRoom").hide();
-            }
-
-            // console.log(db2.ref().child(currentRoomKey).getItem());
-            // console.log(db2.ref().child(currentRoomKey));
-            // console.log(db2.ref(currentRoomKey))
-            // $(loadChat).append();
-
-            // -M8kyngHx07kIaFcDJk9
-            // console.log(db2.ref().orderByKey())
-            // console.log(db2.child('-M8kyngHx07kIaFcDJk9'));
-
-            db2.ref('-M8kyngHx07kIaFcDJk9').once('value').then(function(snapshot){
-                console.log(snapshot.val().messages)
-                var messages = snapshot.val().messages
-
-                var parsedMessages = JSON.parse(messages);
-
-                console.log(parsedMessages);
-            })
-
-            // console.log(db2.ref('-M8kyngHx07kIaFcDJk9'))
-
-            // console.log(db2.getReference(currentRoomKey))
-           
-        })
 
     </script>
 </body>
