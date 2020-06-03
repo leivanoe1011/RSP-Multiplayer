@@ -92,11 +92,15 @@
         <div class="row">
             <div id="loadChat" class="col-sm-12 col-lg-8">
 
+                <form>
+                    <textarea name="messages" id="loadMessage" rows="10" class="form-control"></textarea>
+                </form>
+
             </div>
         </div>
         <form>
             <div class="form-group">
-                <label for="exampleFormControlTextarea1">Example textarea</label>
+                <label for="exampleFormControlTextarea1">Type Message Here</label>
                 <textarea id="chatMessage" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
               </div>
 
@@ -174,11 +178,7 @@
             // After the Object is created, we get the Key
             var key = myRef.getKey();
 
-
             currentRoomKey = key;
-
-
-            console.log("Create New Room Key " + key);
  
         }
 
@@ -222,6 +222,20 @@
         }
        
 
+        $(document).on("click", "#chat", function(event){
+            
+            event.preventDefault();
+
+            var ref = db2.ref(currentRoomKey + "/messages" );
+
+            var message = $("#chatMessage").val();
+
+            ref.push(playerId + ":" + message);
+
+            console.log(message);
+
+        })
+
 
         $(document).on("click", ".room_selected", function(event){
 
@@ -258,6 +272,9 @@
 
             // If you create a new Room, then you're player 1
             sessionStorage.setItem("playerId", "Player1");
+
+            sessionStorage.setItem("gameRoom", currentRoomKey);
+
 
             $("#gameRoom").hide();
         })
@@ -318,14 +335,17 @@
 
                 // Only get the messages from the room if the user has a key
                 // get the messages for the specific room below
-                db2.ref(currentRoomKey).once('value').then(function(snapshot){
-                    console.log(snapshot.val().messages)
-                    var messages = snapshot.val().messages
+                db2.ref(currentRoomKey + "/messages").once('value').then(function(snapshot){
 
-                    var parsedMessages = JSON.parse(messages);
+                    snapshot.forEach(function(childSnapshot){
+                        var message = childSnapshot.val();
+                        var textAreadMsg = message + "\n"
+                        $("#loadMessage").append(textAreadMsg)
 
-                    console.log(parsedMessages);
+                    })
+                    
                 })
+
             }
 
             // Create Room Buttons
