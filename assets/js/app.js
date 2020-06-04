@@ -115,11 +115,28 @@
             sessionStorage.setItem("gameRoom", currentRoomKey);
 
             // If you're joining a room, then you're player 2
-            sessionStorage.setItem("playerId", "Player2");
+            playerId = "Player2";
+            sessionStorage.setItem("playerId", playerId);
 
             console.log(currentRoomKey);
 
-             $("#gameRoom").hide();
+            db2.ref(currentRoomKey + "/messages").on("value", function(snapshot){
+            
+                $("#loadMessage").val('');
+    
+                var messages = "";
+    
+                snapshot.forEach(function(childSnapshot){
+                    var message = childSnapshot.val();
+                    var textAreadMsg = message + "\n"
+                    messages += textAreadMsg;
+                    
+                })
+    
+                $("#loadMessage").val(messages)
+            })
+
+            $("#gameRoom").hide();
         });
 
 
@@ -135,7 +152,9 @@
             createNewGameRoom(gameRoomName);
 
             // If you create a new Room, then you're player 1
-            sessionStorage.setItem("playerId", "Player1");
+            playerId = "Player1";
+            
+            sessionStorage.setItem("playerId", playerId);
 
             sessionStorage.setItem("gameRoom", currentRoomKey);
 
