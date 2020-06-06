@@ -1,4 +1,27 @@
     
+
+        // Each ocurrence of the app will track the score of the current user. 
+        // Player 1 has won ......
+        // Player 2 has won ......
+
+        // Might want to display Room Name as well
+
+        // Add validation of the Room name also. There can only be one Room with that name
+        
+
+         // Will need to remove the timer
+        // Once someone submits an answer, they can log off. 
+        // then the other user can submit their answer whenever they want. 
+        // The main goal is to chat and the score is just side stuff
+
+        
+        // to control that someone submitted an answer, each app instance can populate 
+        // "1" to a field.  We will continue reading the Database until 2 is return.
+        // Once 2 is returned we can validate both answers and declare the winner. 
+        // At the same time, we can populate the fields of who won.
+
+        
+
         var gameOptions = ["p","s","r"];
 
         var gameRooms = [];
@@ -79,7 +102,6 @@
                     $("#joinRoom").append(roomButton);
                 });    
 
-
             });
         }
        
@@ -92,7 +114,7 @@
 
             var message = $("#chatMessage").val();
 
-            ref.push(playerId + ":" + message);
+            ref.push(playerId + ": " + message);
 
             console.log(message);
 
@@ -126,10 +148,11 @@
     
                 var messages = "";
     
+                // Loop through each message
                 snapshot.forEach(function(childSnapshot){
                     var message = childSnapshot.val();
-                    var textAreadMsg = message + "\n"
-                    messages += textAreadMsg;
+                    var textAreadMsg = message + "\n" // New line keyword
+                    messages += textAreadMsg; // append the messages
                     
                 })
     
@@ -214,6 +237,10 @@
             $(createSpinner).append(loading);
             $("#loadingContainer").append(createSpinner);
 
+            // Will need to remove the timer
+            // Once someone submits an answer, they can log off. 
+            // then the other user can submit their answer whenever they want. 
+            // The main goal is to chat and the score is just side stuff
             setTimeout(function(){ 
                 console.log("Hello"); 
                 $("#loadingContainer").empty();
@@ -249,6 +276,7 @@
             }
 
             // Create Room Buttons
+            // !!! Only need to create buttons for Rooms that only have 1 member Active
             createRoomButtons();
            
         })
