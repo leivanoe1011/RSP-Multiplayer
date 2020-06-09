@@ -14,7 +14,7 @@
         // then the other user can submit their answer whenever they want. 
         // The main goal is to chat and the score is just side stuff
 
-        
+
         // to control that someone submitted an answer, each app instance can populate 
         // "1" to a field.  We will continue reading the Database until 2 is return.
         // Once 2 is returned we can validate both answers and declare the winner. 
@@ -32,7 +32,7 @@
 
         var playerId = sessionStorage.getItem("playerId");
 
-
+        // Database structure
         var gameRoom = {
             roomName:"",
             playerCount: 0,
@@ -40,7 +40,8 @@
             player2Wins: 0,
             messages: [],
             player1Choice: "",
-            player2Choice: ""
+            player2Choice: "",
+            playerChoiceCnt: 0
         }
 
         // Your web app's Firebase configuration
@@ -60,7 +61,59 @@
 
         var db2 = firebase.database(app);
 
+        
+        function createDisplayValues(){
 
+        }
+
+        function displayScore(currentObj){
+            
+            // only player 1 will update the score
+            // That way only one player rewrites the DB
+            if(playerId === "player1"){
+                
+                var player1Choice = currentObj.player1Choice;
+
+                var player2Choice = currentObj.player2Choice;
+
+                var player2Wins = currentObj.player2Wins;
+
+                var player1Wins = currentObj.player1Wins;
+            }
+            
+        }
+
+
+        // When the count has changed
+        db2.ref(currentRoomKey + "/playerChoiceCnt").on("value", function(snapshot){
+
+            var currentObj = snapshot.val();
+
+            var playerChoiceCnt = 0;
+
+            if(snapshot.child("playerChoiceCnt").exists()){
+                playerChoiceCnt = currentObj.playerChoiceCnt;
+            }
+            
+
+            if (playerChoiceCnt === 2){
+                displayScore(currentObj)
+            }
+
+        })
+
+        // Only player 2 updates need to be reflected
+        // Player 1 updates are reflected above
+        db2.ref(currentRoomKey + "/player2Wins").on("value", function(snapshot){
+            var currentObj = snapshot.val();
+            
+            if(playerId === "player2"){
+
+            }
+        })
+
+
+        // Create new game room
         function createNewGameRoom(roomName){
 
             emptyMessage.push("Start Game");
@@ -72,7 +125,8 @@
                 player2Wins: 0,
                 messages: JSON.stringify(emptyMessage),
                 player1Choice: gameRoom.player1Choice,
-                player2Choice: gameRoom.player2Choice
+                player2Choice: gameRoom.player2Choice,
+                playerChoiceCnt: gameRoom.playerChoiceCnt
             });
             
             myRef.push();
@@ -137,7 +191,7 @@
             sessionStorage.setItem("gameRoom", currentRoomKey);
 
             // If you're joining a room, then you're player 2
-            playerId = "Player2";
+            playerId = "player2";
             sessionStorage.setItem("playerId", playerId);
 
             console.log(currentRoomKey);
@@ -175,7 +229,7 @@
             createNewGameRoom(gameRoomName);
 
             // If you create a new Room, then you're player 1
-            playerId = "Player1";
+            playerId = "player1";
 
             sessionStorage.setItem("playerId", playerId);
 
@@ -241,6 +295,21 @@
             // Once someone submits an answer, they can log off. 
             // then the other user can submit their answer whenever they want. 
             // The main goal is to chat and the score is just side stuff
+
+            if (playerId === "player1"){
+                db2.ref(currentRoomKey).set({
+                    player1Choice : choice,
+                    playerChoiceCnt : 1
+                });
+    
+            }else{
+                db2.ref(currentRoomKey).set({
+                    player2Choice : choice,
+                    playerChoiceCnt : 1
+                });
+            }
+
+
             setTimeout(function(){ 
                 console.log("Hello"); 
                 $("#loadingContainer").empty();
@@ -249,6 +318,8 @@
             }, 5000);
 
         })
+        // End of Submit Answer Function
+
 
         db2.ref(currentRoomKey + "/messages").on("value", function(snapshot){
             
@@ -272,7 +343,6 @@
             
             if(currentRoomKey !== null){
                 $("#gameRoom").hide();
-
             }
 
             // Create Room Buttons
