@@ -168,7 +168,7 @@
         // If you're joining a room, then you're player 2
         playerId = "player2";
 
-        
+
         // Create Initial Message
         var ref = db2.ref(currentRoomKey + "/messages" );
 
