@@ -158,16 +158,25 @@
 
         console.log($(this).text());
 
-        console.log(currentRoomKey);
-
         // Variable created when the app loads
         currentRoomKey = $(this).data("roomkey");
+
+        console.log(currentRoomKey)
 
         sessionStorage.setItem("gameRoom", currentRoomKey);
 
         // If you're joining a room, then you're player 2
         playerId = "player2";
 
+        
+        // Create Initial Message
+        var ref = db2.ref(currentRoomKey + "/messages" );
+
+        var message = "Joined!";
+    
+        ref.push(playerId + ": " + message);
+
+        
         sessionStorage.setItem("playerId", playerId);
 
         db2.ref(currentRoomKey + "/messages").on("value", function(snapshot){
