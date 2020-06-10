@@ -162,7 +162,7 @@
 
         // Create Room Buttons
         // !!! Only need to create buttons for Rooms that only have 1 member Active
-        // createRoomButtons();
+        createRoomButtons();
        
     })
 

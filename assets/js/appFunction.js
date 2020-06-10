@@ -68,3 +68,27 @@ function createNewGameRoom(roomName){
 }
 
 
+function createRoomButtons(){
+
+    // Capture all the entries in the Database
+    db2.ref().on("value", function(snapshot){
+
+        snapshot.forEach(function(childSnapshot){
+            var room = childSnapshot.val();
+
+            // Each Key will get loaded into each button
+            var key = childSnapshot.key;
+
+            // console.log(room);
+
+            var roomButton = $("<button>");
+            $(roomButton).addClass("btn btn-primary room_selected");
+            $(roomButton).attr("data-roomkey", key);
+
+            $(roomButton).text(room.roomName);
+            $("#joinRoom").append(roomButton);
+        });    
+
+    });
+}
+
