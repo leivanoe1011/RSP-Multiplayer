@@ -152,6 +152,35 @@
     })
 
 
+    $(document).on("click", ".room_selected", function(event){
+
+        event.preventDefault();
+
+        console.log($(this).text());
+
+        console.log(currentRoomKey);
+
+        // Variable created when the app loads
+        currentRoomKey = $(this).data("roomkey");
+
+        sessionStorage.setItem("gameRoom", currentRoomKey);
+
+        // If you're joining a room, then you're player 2
+        playerId = "player2";
+
+        sessionStorage.setItem("playerId", playerId);
+
+        db2.ref(currentRoomKey + "/messages").on("value", function(snapshot){
+        
+            loadMessage(snapshot);
+            
+        })
+
+        $("#gameRoom").hide();
+    });
+
+
+
     $(document).ready(function(){
 
         console.log(currentRoomKey);

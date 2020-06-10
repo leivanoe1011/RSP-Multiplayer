@@ -68,6 +68,7 @@ function createNewGameRoom(roomName){
 }
 
 
+// Creates the Game Rooms
 function createRoomButtons(){
 
     // Capture all the entries in the Database
