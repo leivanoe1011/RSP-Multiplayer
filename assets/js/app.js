@@ -37,13 +37,15 @@
     // Database structure
     var gameRoom = {
         roomName:"",
-        playerCount: 0,
+        playerCount: 0, // Used to validate if there is 2 players
         player1Wins: 0,
         player2Wins: 0,
         messages: [],
-        player1Choice: "",
+        player1Choice: "", 
+        player1Waiting: 0, // Used to flag which player is waiting
         player2Choice: "",
-        playerChoiceCnt: 0
+        player2Waiting: 0, // Used to flag which player is waiting
+        playerChoiceCnt: 0 // Reflects if both users have entered an answer
     }
 
     // Your web app's Firebase configuration
@@ -74,6 +76,21 @@
     db2.ref(currentRoomKey + "/playerChoiceCnt").on("value", function(snapshot){
         console.log("reset submit form and button");
         console.log(snapshot);
+
+        var choiceCnt = snapshot.val();
+
+        if(choiceCnt === 2){
+            db2.ref(currentRoomKey).set({
+                player1Choice: "", 
+                player1Waiting: 0, // Used to flag which player is waiting
+                player2Choice: "",
+                player2Waiting: 0, // Used to flag which player is waiting
+                playerChoiceCnt: 0 // Reflects if both users have entered an answer
+            })
+
+            resetApp();
+        }
+        
     })
 
 
@@ -89,12 +106,19 @@
         var player1Wins = 0;
         var player2Wins = 0;
 
-        db2.ref(currentRoomKey).once("value", function(snapshot){
-            var currentObj = snapshot.val();
-            player1Wins = currentObj.player1Wins;
-            player2Wins = currentObj.player2Wins;
-        })
-
+        if (currentRoomKey !== null){
+            db2.ref(currentRoomKey).once("value", function(snapshot){
+           
+                if(snapshot.child("player1Wins").exists() 
+                    && snapshot.child("player2Wins").exists() ){
+                        
+                        var currentObj = snapshot.val();
+                        player1Wins = currentObj.player1Wins;
+                        player2Wins = currentObj.player2Wins;
+    
+                    }
+            })
+        }
 
         console.log(player1Choice);
 
@@ -116,11 +140,13 @@
                 player2Wins++;
             }
 
-            db2.ref(currentRoomKey).set({
-                player1Wins: player1Wins,
-                player2Wins: player2Wins,
-                playerChoiceCnt: 0
-            })
+            if (currentRoomKey !== null){
+                db2.ref(currentRoomKey).set({
+                    player1Wins: player1Wins,
+                    player2Wins: player2Wins,
+                    playerChoiceCnt: 0
+                })
+            }
 
             // At Choice Cnt == 0 remove the Disable class from 
             // the Submit button and clear choice
@@ -139,13 +165,22 @@
         var player1Wins = 0;
         var player2Wins = 0;
 
-        // We don't care about our own choice
-        db2.ref(currentRoomKey).once("value", function(snapshot){
-            var currentObj = snapshot.val();
-            player1Wins = currentObj.player1Wins;
-            player2Wins = currentObj.player2Wins;
-        })
 
+        // We don't care about our own choice
+        if (currentRoomKey !== null){
+            db2.ref(currentRoomKey).once("value", function(snapshot){
+           
+                if(snapshot.child("player1Wins").exists() 
+                    && snapshot.child("player2Wins").exists() ){
+                        
+                        var currentObj = snapshot.val();
+                        player1Wins = currentObj.player1Wins;
+                        player2Wins = currentObj.player2Wins;
+    
+                    }
+            })
+        }
+        
 
         if(playerId === "player2"){
             return
@@ -164,11 +199,13 @@
                 player2Wins++;
             }
 
-            db2.ref(currentRoomKey).set({
-                player1Wins: player1Wins,
-                player2Wins: player2Wins,
-                playerChoiceCnt: 0
-            })
+            if (currentRoomKey !== null){
+                db2.ref(currentRoomKey).set({
+                    player1Wins: player1Wins,
+                    player2Wins: player2Wins,
+                    playerChoiceCnt: 0
+                })
+            }
 
             // At Choice Cnt == 0 remove the Disable class from 
             // the Submit button and clear choice
@@ -202,16 +239,29 @@
 
         // Load the input to Firebase
         if (playerId === "player1"){
-            db2.ref(currentRoomKey).set({
-                player1Choice : choice,
-                playerChoiceCnt : 1
-            });
-
+            db2.ref(currentRoomKey).once("value", function(snapshot){
+                if(snapshot.child("player1Choice").exists() 
+                    && snapshot.child("player1Waiting").exists() 
+                    && snapshot.child("playerChoiceCnt").exists()){
+                        db2.ref(currentRoomKey).set({
+                            player1Choice : choice,
+                            player1Waiting: 1,
+                            playerChoiceCnt : 1
+                        });
+                    }
+            })
         }else{
-            db2.ref(currentRoomKey).set({
-                player2Choice : choice,
-                playerChoiceCnt : 1
-            });
+            db2.ref(currentRoomKey).once("value", function(snapshot){
+                if(snapshot.child("player2Choice").exists() 
+                    && snapshot.child("player2Waiting").exists() 
+                    && snapshot.child("playerChoiceCnt").exists()){
+                        db2.ref(currentRoomKey).set({
+                            player2Choice : choice,
+                            player2Waiting: 1,
+                            playerChoiceCnt : 1
+                        });
+                    }
+            })
         }
 
     })
@@ -318,8 +368,13 @@
             $("#gameRoom").hide();
 
             // Waiting for opponent and should not be allowed to enter new value
-            db2.ref(currentRoomKey + "/playerChoiceCnt").once("value", function(snapshot){
-                var choiceCnt = snapshot.val();
+            db2.ref(currentRoomKey).once("value", function(snapshot){
+                var obj = snapshot.val();
+
+                var choiceCnt = obj.playerChoiceCnt;
+                var player1Choice = obj.player1Choice;
+                var player2Choice = obj.player2Choice;
+
                 if (choiceCnt === 1){
                     waitingForOpponent()
                 }

@@ -427,6 +427,35 @@
             
         // })
         
+
+    // // When the count has changed, need to validate if both players have entered an answer
+    // db2.ref(currentRoomKey + "/playerChoiceCnt").on("value", function(snapshot){
+
+    //     // Only one player will update the database
+    //     if(playerId === "player1"){
+            
+    //         db2.ref(currentRoomKey).once("value").then(function(objSnapshot){
+
+    //             var currentObj = objSnapshot.val();
+
+    //             console.log(currentObj);
+
+    //             var playerChoiceCnt = 0;
+    
+    //             if(objSnapshot.child("playerChoiceCnt").exists()){
+    //                 playerChoiceCnt = currentObj.playerChoiceCnt;
+    //             }
+                
+    //             if (playerChoiceCnt === 2){
+    //                 validateAnswer(currentObj.player1Choice, currentObj.player2Choice);
+    //             }
+
+    //         });
+
+    //     }
+        
+    // })
+
         
 
         
