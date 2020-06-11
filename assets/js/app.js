@@ -176,6 +176,60 @@
     })
 
 
+    // Capture the input from the User
+    $("#submit").on("click", function(event){
+        
+        // prevents the form from capturing the form input 
+        // and sending it in a URL string
+        event.preventDefault();
+
+        var choice = $("#choice").val();
+
+        var isChoiceValid = gameOptions.includes(choice);
+
+        if(!isChoiceValid){
+            alert("Please be sure to select an option between P(paper), S(scissor), R(rock)");
+            $("#choice").val(' ');
+
+            // Go back to the APP when the answer is not valid
+            return;
+        }
+
+        // Once the data is submitted, the user cannot enter a new value.
+        // This will be removed once both users enter a value
+        $("#submit").addClass("disabled");
+
+
+        // Create a spinner while waiting for the opponent to enter 
+        // their choice
+        var createSpinner = $("<div>");
+        $(createSpinner).addClass("spinner-border");
+        $(createSpinner).attr("role", "status");
+
+        var loading = $("<span>");
+        $(loading).addClass("sr-only");
+        $(loading).text("Loading...");
+        
+        $(createSpinner).append(loading);
+        $("#loadingContainer").append(createSpinner);
+
+
+        // Load the input to Firebase
+        if (playerId === "player1"){
+            db2.ref(currentRoomKey).set({
+                player1Choice : choice,
+                playerChoiceCnt : 1
+            });
+
+        }else{
+            db2.ref(currentRoomKey).set({
+                player2Choice : choice,
+                playerChoiceCnt : 1
+            });
+        }
+
+    })
+
 
     $("#createGameRoom").on("click", function(event){
         event.preventDefault();
