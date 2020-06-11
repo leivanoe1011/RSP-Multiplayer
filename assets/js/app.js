@@ -32,6 +32,8 @@
 
     var playerId = sessionStorage.getItem("playerId");
 
+    var opponentChoice = "";
+
     // Database structure
     var gameRoom = {
         roomName:"",
@@ -67,34 +69,112 @@
         loadMessage(snapshot);
     })
 
-
-    // When the count has changed, need to validate if both players have entered an answer
+    // if the player choice count is back to 0 then remove Disable class
+    // from form and submit button
     db2.ref(currentRoomKey + "/playerChoiceCnt").on("value", function(snapshot){
+        console.log("reset submit form and button");
+        console.log(snapshot);
+    })
 
-        // Only one player will update the database
+
+    // Get the Player Choice
+    db2.ref(currentRoomKey + "/player1Choice").on("value", function(snapshot){
+        
+        console.log("In Player 1 Choice firebase trigger");
+
+        var player1Choice = snapshot.val();
+        var myChoice = $("#choice").val();
+
+
+        var player1Wins = 0;
+        var player2Wins = 0;
+
+        db2.ref(currentRoomKey).once("value", function(snapshot){
+            var currentObj = snapshot.val();
+            player1Wins = currentObj.player1Wins;
+            player2Wins = currentObj.player2Wins;
+        })
+
+
+        console.log(player1Choice);
+
+        // We don't care about our own choice
         if(playerId === "player1"){
-            
-            db2.ref(currentRoomKey).once("value").then(function(objSnapshot){
+            return
+        }
+        else{
+            // Here player 2 is waiting for Player 1
+            var message = validateGameAnswers(player1Choice, myChoice);
 
-                var currentObj = objSnapshot.val();
+            var opponentChoice = player1Choice;
 
-                console.log(currentObj);
+            if (message === 1){
+                console.log("Player 1 won");
+                player1Wins++;
+            }
+            else {
+                player2Wins++;
+            }
 
-                var playerChoiceCnt = 0;
-    
-                if(objSnapshot.child("playerChoiceCnt").exists()){
-                    playerChoiceCnt = currentObj.playerChoiceCnt;
-                }
-                
-                if (playerChoiceCnt === 2){
-                    validateAnswer(currentObj.player1Choice, currentObj.player2Choice);
-                }
+            db2.ref(currentRoomKey).set({
+                player1Wins: player1Wins,
+                player2Wins: player2Wins,
+                playerChoiceCnt: 0
+            })
 
-            });
+            // At Choice Cnt == 0 remove the Disable class from 
+            // the Submit button and clear choice
 
         }
-        
     })
+
+    db2.ref(currentRoomKey + "/player2Choice").on("value", function(snapshot){
+
+        console.log("In Player 2 Choice firebase trigger");
+        
+        var player2Choice = snapshot.val();
+        var myChoice = $("#choice").val();
+
+
+        var player1Wins = 0;
+        var player2Wins = 0;
+
+        // We don't care about our own choice
+        db2.ref(currentRoomKey).once("value", function(snapshot){
+            var currentObj = snapshot.val();
+            player1Wins = currentObj.player1Wins;
+            player2Wins = currentObj.player2Wins;
+        })
+
+
+        if(playerId === "player2"){
+            return
+        }
+        else{
+            // Here player 1 is waiting for Player 2
+            var message = validateGameAnswers(myChoice, player2Choice);
+
+            var opponentChoice = player2Choice;
+
+            if (message === 1){
+                console.log("Player 1 won");
+                player1Wins++;
+            }
+            else {
+                player2Wins++;
+            }
+
+            db2.ref(currentRoomKey).set({
+                player1Wins: player1Wins,
+                player2Wins: player2Wins,
+                playerChoiceCnt: 0
+            })
+
+            // At Choice Cnt == 0 remove the Disable class from 
+            // the Submit button and clear choice
+        }
+    })
+
 
 
     $("#createGameRoom").on("click", function(event){
@@ -207,6 +287,34 @@
 
  
 
+
+    // // When the count has changed, need to validate if both players have entered an answer
+    // db2.ref(currentRoomKey + "/playerChoiceCnt").on("value", function(snapshot){
+
+    //     // Only one player will update the database
+    //     if(playerId === "player1"){
+            
+    //         db2.ref(currentRoomKey).once("value").then(function(objSnapshot){
+
+    //             var currentObj = objSnapshot.val();
+
+    //             console.log(currentObj);
+
+    //             var playerChoiceCnt = 0;
+    
+    //             if(objSnapshot.child("playerChoiceCnt").exists()){
+    //                 playerChoiceCnt = currentObj.playerChoiceCnt;
+    //             }
+                
+    //             if (playerChoiceCnt === 2){
+    //                 validateAnswer(currentObj.player1Choice, currentObj.player2Choice);
+    //             }
+
+    //         });
+
+    //     }
+        
+    // })
 
 
 

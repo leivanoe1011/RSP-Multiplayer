@@ -93,3 +93,43 @@ function createRoomButtons(){
     });
 }
 
+
+function validateGameAnswers(player1, player2){
+    
+    var message = "tie";
+
+    if(player2 === "p" && player1 === "s"){
+        message = "player 1 wins";
+        console.log("player 1 wins");
+        return message;
+    }
+    else if (player2 === "s" && player1 === "p"){
+        message = "player 2 wins";
+        console.log("player 2 wins");
+        return message;
+    }
+    else if (player2 === "r" && player1 === "p"){
+        message = "player 1 wins";
+        console.log("player 1 wins");
+        return message;
+    }
+    else if (player2 === "p" && player1 === "r"){
+        message = "player 2 wins";
+        console.log("player 2 wins");
+        return message;
+    }
+    else if (player2 === "s" && player1 === "r"){
+        message = "player 1 wins";
+        console.log("player 1 wins");
+        return message;
+    }
+    else if (player2 === "r" && player1 === "s"){
+        message = "player 2 wins";
+        console.log("player 2 wins");
+        return message;
+    }
+    else{
+        console.log("tie");
+        return message;
+    }
+}
