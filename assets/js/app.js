@@ -66,7 +66,7 @@
     var db2 = firebase.database(app);
 
 
-
+    // Event listener when new messages are pushed to Firebase
     db2.ref(currentRoomKey + "/messages").on("value", function(snapshot){
         
         if(currentRoomKey == null){
@@ -90,7 +90,7 @@
         var choiceCnt = snapshot.val();
 
         if(choiceCnt === 2){
-            db2.ref(currentRoomKey).set({
+            db2.ref(currentRoomKey).update({
                 player1Choice: "", 
                 player1Waiting: 0, // Used to flag which player is waiting
                 player2Choice: "",
@@ -107,6 +107,18 @@
     // Get the Player Choice
     db2.ref(currentRoomKey + "/player1Choice").on("value", function(snapshot){
         
+        var isWaiting = 0;
+
+        db2.ref(currentRoomKey + "/player1Waiting").once("value", function(snapshot){
+            isWaiting = snapshot.val();
+        });
+
+        // Are we waiting for an answer
+        if (isWaiting === 0){
+            return;
+        }
+
+        // Do we have a Room key
         if(currentRoomKey == null){
             return;
         }
@@ -156,7 +168,7 @@
             }
 
             if (currentRoomKey !== null){
-                db2.ref(currentRoomKey).set({
+                db2.ref(currentRoomKey).update({
                     player1Wins: player1Wins,
                     player2Wins: player2Wins,
                     playerChoiceCnt: 0
@@ -171,6 +183,16 @@
 
     db2.ref(currentRoomKey + "/player2Choice").on("value", function(snapshot){
 
+        var waiting = 0;
+
+        db2.ref(currentRoomKey + "/player2Waiting").once("value", function(snapshot){
+            waiting = snapshot.val();
+        });
+
+        if(waiting === 0){
+            return;
+        }
+        
         if(currentRoomKey == null){
             return;
         }
@@ -220,7 +242,7 @@
             }
 
             if (currentRoomKey !== null){
-                db2.ref(currentRoomKey).set({
+                db2.ref(currentRoomKey).update({
                     player1Wins: player1Wins,
                     player2Wins: player2Wins,
                     playerChoiceCnt: 0
