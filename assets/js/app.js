@@ -185,6 +185,8 @@
 
         var choice = $("#choice").val();
 
+        choice = choice.toLowerCase();
+
         var isChoiceValid = gameOptions.includes(choice);
 
         if(!isChoiceValid){
@@ -195,23 +197,7 @@
             return;
         }
 
-        // Once the data is submitted, the user cannot enter a new value.
-        // This will be removed once both users enter a value
-        $("#submit").addClass("disabled");
-
-
-        // Create a spinner while waiting for the opponent to enter 
-        // their choice
-        var createSpinner = $("<div>");
-        $(createSpinner).addClass("spinner-border");
-        $(createSpinner).attr("role", "status");
-
-        var loading = $("<span>");
-        $(loading).addClass("sr-only");
-        $(loading).text("Loading...");
-        
-        $(createSpinner).append(loading);
-        $("#loadingContainer").append(createSpinner);
+        waitingForOpponent();
 
 
         // Load the input to Firebase
@@ -330,6 +316,14 @@
         
         if(currentRoomKey !== null){
             $("#gameRoom").hide();
+
+            // Waiting for opponent and should not be allowed to enter new value
+            db2.ref(currentRoomKey + "/playerChoiceCnt").once("value", function(snapshot){
+                var choiceCnt = snapshot.val();
+                if (choiceCnt === 1){
+                    waitingForOpponent()
+                }
+            })
         }
 
         // Create Room Buttons
