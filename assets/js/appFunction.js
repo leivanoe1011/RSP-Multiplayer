@@ -72,7 +72,8 @@ function createNewGameRoom(roomName){
 function createRoomButtons(){
 
     // Capture all the entries in the Database
-    db2.ref().on("value", function(snapshot){
+    db2.ref().once("value", function(snapshot){
+
 
         snapshot.forEach(function(childSnapshot){
             var room = childSnapshot.val();

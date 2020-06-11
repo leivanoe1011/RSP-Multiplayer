@@ -68,12 +68,22 @@
 
 
     db2.ref(currentRoomKey + "/messages").on("value", function(snapshot){
+        
+        if(currentRoomKey == null){
+            return;
+        }
+
         loadMessage(snapshot);
     })
 
     // if the player choice count is back to 0 then remove Disable class
     // from form and submit button
     db2.ref(currentRoomKey + "/playerChoiceCnt").on("value", function(snapshot){
+
+        if(currentRoomKey == null){
+            return;
+        }
+
         console.log("reset submit form and button");
         console.log(snapshot);
 
@@ -97,15 +107,20 @@
     // Get the Player Choice
     db2.ref(currentRoomKey + "/player1Choice").on("value", function(snapshot){
         
+        if(currentRoomKey == null){
+            return;
+        }
+
         console.log("In Player 1 Choice firebase trigger");
 
         var player1Choice = snapshot.val();
         var myChoice = $("#choice").val();
 
-
         var player1Wins = 0;
         var player2Wins = 0;
 
+        // We don't care about our own choice
+        // Need to validate we are currently in a room
         if (currentRoomKey !== null){
             db2.ref(currentRoomKey).once("value", function(snapshot){
            
@@ -156,6 +171,10 @@
 
     db2.ref(currentRoomKey + "/player2Choice").on("value", function(snapshot){
 
+        if(currentRoomKey == null){
+            return;
+        }
+
         console.log("In Player 2 Choice firebase trigger");
         
         var player2Choice = snapshot.val();
@@ -167,6 +186,7 @@
 
 
         // We don't care about our own choice
+        // Need to validate we are currently in a room
         if (currentRoomKey !== null){
             db2.ref(currentRoomKey).once("value", function(snapshot){
            
@@ -362,9 +382,10 @@
 
     $(document).ready(function(){
 
-        console.log(currentRoomKey);
-        
         if(currentRoomKey !== null){
+
+            console.log(currentRoomKey);
+
             $("#gameRoom").hide();
 
             // Waiting for opponent and should not be allowed to enter new value
