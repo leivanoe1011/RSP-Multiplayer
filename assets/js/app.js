@@ -185,14 +185,17 @@
 
         var waiting = 0;
 
+        // Validate if its a legitimate entry by the player
         db2.ref(currentRoomKey + "/player2Waiting").once("value", function(snapshot){
             waiting = snapshot.val();
         });
 
+        // Are we waiting for an answer
         if(waiting === 0){
             return;
         }
-        
+
+         // Do we have a Room key
         if(currentRoomKey == null){
             return;
         }
@@ -285,7 +288,7 @@
                 if(snapshot.child("player1Choice").exists() 
                     && snapshot.child("player1Waiting").exists() 
                     && snapshot.child("playerChoiceCnt").exists()){
-                        db2.ref(currentRoomKey).set({
+                        db2.ref(currentRoomKey).update({
                             player1Choice : choice,
                             player1Waiting: 1,
                             playerChoiceCnt : 1
@@ -297,7 +300,7 @@
                 if(snapshot.child("player2Choice").exists() 
                     && snapshot.child("player2Waiting").exists() 
                     && snapshot.child("playerChoiceCnt").exists()){
-                        db2.ref(currentRoomKey).set({
+                        db2.ref(currentRoomKey).update({
                             player2Choice : choice,
                             player2Waiting: 1,
                             playerChoiceCnt : 1
