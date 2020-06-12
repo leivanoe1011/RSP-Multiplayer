@@ -390,15 +390,19 @@
         var message = "Joined!";
     
         ref.push(playerId + ": " + message);
-
-        
+   
         sessionStorage.setItem("playerId", playerId);
 
+        // Here might want to update this to ONCE instead of ON.
         db2.ref(currentRoomKey + "/messages").on("value", function(snapshot){
         
             loadMessage(snapshot);
             
         })
+
+        db2.ref(currentRoomKey).update({
+            playerCount: 2
+        });
 
         $("#gameRoom").hide();
     });
