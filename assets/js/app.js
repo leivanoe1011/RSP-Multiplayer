@@ -171,7 +171,7 @@
                 db2.ref(currentRoomKey).update({
                     player1Wins: player1Wins,
                     player2Wins: player2Wins,
-                    playerChoiceCnt: 0
+                    playerChoiceCnt: 1
                 })
             }
 
@@ -248,7 +248,7 @@
                 db2.ref(currentRoomKey).update({
                     player1Wins: player1Wins,
                     player2Wins: player2Wins,
-                    playerChoiceCnt: 0
+                    playerChoiceCnt: 1
                 })
             }
 
