@@ -159,6 +159,12 @@
 
             var opponentChoice = player1Choice;
 
+            var playerChoiceCnt = 0;
+
+            db2.ref(currentRoomKey + "/playerChoiceCnt").once("value", function(snapshot){
+                playerChoiceCnt = snapshot.val();
+            })
+
             if (message === 1){
                 console.log("Player 1 won");
                 player1Wins++;
@@ -171,7 +177,7 @@
                 db2.ref(currentRoomKey).update({
                     player1Wins: player1Wins,
                     player2Wins: player2Wins,
-                    playerChoiceCnt: playerChoiceCnt + 1
+                    playerChoiceCnt: playerChoiceCnt++
                 })
             }
 
@@ -236,6 +242,12 @@
 
             var opponentChoice = player2Choice;
 
+            var playerChoiceCnt = 0;
+
+            db2.ref(currentRoomKey + "/playerChoiceCnt").once("value", function(snapshot){
+                playerChoiceCnt = snapshot.val();
+            })
+
             if (message === 1){
                 console.log("Player 1 won");
                 player1Wins++;
@@ -248,7 +260,7 @@
                 db2.ref(currentRoomKey).update({
                     player1Wins: player1Wins,
                     player2Wins: player2Wins,
-                    playerChoiceCnt: playerChoiceCnt + 1
+                    playerChoiceCnt: playerChoiceCnt++
                 })
             }
 
