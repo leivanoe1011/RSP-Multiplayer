@@ -119,7 +119,7 @@
         }
 
         // Do we have a Room key
-        if(currentRoomKey == null){
+        if(currentRoomKey === null){
             return;
         }
 
@@ -171,7 +171,7 @@
                 db2.ref(currentRoomKey).update({
                     player1Wins: player1Wins,
                     player2Wins: player2Wins,
-                    playerChoiceCnt: 1
+                    playerChoiceCnt: playerChoiceCnt + 1
                 })
             }
 
@@ -196,7 +196,7 @@
         }
 
          // Do we have a Room key
-        if(currentRoomKey == null){
+        if(currentRoomKey === null){
             return;
         }
 
@@ -248,7 +248,7 @@
                 db2.ref(currentRoomKey).update({
                     player1Wins: player1Wins,
                     player2Wins: player2Wins,
-                    playerChoiceCnt: 1
+                    playerChoiceCnt: playerChoiceCnt + 1
                 })
             }
 
