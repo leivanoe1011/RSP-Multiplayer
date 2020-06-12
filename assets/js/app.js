@@ -303,7 +303,7 @@
                         db2.ref(currentRoomKey).update({
                             player1Choice : choice,
                             player1Waiting: 1,
-                            playerChoiceCnt : 1
+                            playerChoiceCnt : playerChoiceCnt + 1
                         });
                     }
             })
@@ -315,7 +315,7 @@
                         db2.ref(currentRoomKey).update({
                             player2Choice : choice,
                             player2Waiting: 1,
-                            playerChoiceCnt : 1
+                            playerChoiceCnt : playerChoiceCnt + 1
                         });
                     }
             })
