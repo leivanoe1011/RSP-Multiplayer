@@ -1,4 +1,5 @@
 
+
 // Create new game room
 function createNewGameRoom(roomName){
 
@@ -11,7 +12,9 @@ function createNewGameRoom(roomName){
         player2Wins: 0,
         messages: JSON.stringify(emptyMessage),
         player1Choice: gameRoom.player1Choice,
+        player1Waiting: gameRoom.player1Waiting,
         player2Choice: gameRoom.player2Choice,
+        player2Waiting: gameRoom.player2Waiting,
         playerChoiceCnt: gameRoom.playerChoiceCnt
     });
     
@@ -39,34 +42,6 @@ function loadMessage(snapshot){
     })
 
     $("#loadMessage").val(messages)
-}
-
-
-// Create new game room
-function createNewGameRoom(roomName){
-
-    emptyMessage.push("Start Game");
-
-    var myRef = db2.ref().push({
-        roomName: roomName,
-        playerCount: 1,
-        player1Wins: 0,
-        player2Wins: 0,
-        messages: JSON.stringify(emptyMessage),
-        player1Choice: gameRoom.player1Choice,
-        player1Waiting: gameRoom.player1Waiting,
-        player2Choice: gameRoom.player2Choice,
-        player2Waiting: gameRoom.player2Waiting,
-        playerChoiceCnt: gameRoom.playerChoiceCnt
-    });
-    
-    myRef.push();
-
-    // After the Object is created, we get the Key
-    var key = myRef.getKey();
-
-    currentRoomKey = key;
-
 }
 
 

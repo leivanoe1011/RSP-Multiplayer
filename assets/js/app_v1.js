@@ -41,7 +41,7 @@
             messages: [],
             player1Choice: "",
             player2Choice: "",
-            playerChoiceCnt: 0
+            // playerChoiceCnt: 0
         }
 
         // Your web app's Firebase configuration
@@ -89,32 +89,32 @@
 
 
         // When the count has changed, need to validate if both players have entered an answer
-        db2.ref(currentRoomKey + "/playerChoiceCnt").on("value", function(snapshot){
+        // db2.ref(currentRoomKey + "/playerChoiceCnt").on("value", function(snapshot){
 
-            // Only one player will update the database
-            if(playerId === "player1"){
+        //     // Only one player will update the database
+        //     if(playerId === "player1"){
                 
-                db2.ref(currentRoomKey).once("value").then(function(objSnapshot){
+        //         db2.ref(currentRoomKey).once("value").then(function(objSnapshot){
 
-                    var currentObj = objSnapshot.val();
+        //             var currentObj = objSnapshot.val();
 
-                    console.log(currentObj);
+        //             console.log(currentObj);
     
-                    var playerChoiceCnt = 0;
+        //             var playerChoiceCnt = 0;
         
-                    if(objSnapshot.child("playerChoiceCnt").exists()){
-                        playerChoiceCnt = currentObj.playerChoiceCnt;
-                    }
+        //             if(objSnapshot.child("playerChoiceCnt").exists()){
+        //                 playerChoiceCnt = currentObj.playerChoiceCnt;
+        //             }
                     
-                    if (playerChoiceCnt === 2){
-                        validateAnswer(currentObj.player1Choice, currentObj.player2Choice);
-                    }
+        //             if (playerChoiceCnt === 2){
+        //                 validateAnswer(currentObj.player1Choice, currentObj.player2Choice);
+        //             }
     
-                });
+        //         });
 
-            }
+        //     }
             
-        })
+        // })
 
         // Only player 2 updates need to be reflected
         // Player 1 updates are reflected above
@@ -330,18 +330,18 @@
             // then the other user can submit their answer whenever they want. 
             // The main goal is to chat and the score is just side stuff
 
-            if (playerId === "player1"){
-                db2.ref(currentRoomKey).set({
-                    player1Choice : choice,
-                    playerChoiceCnt : 1
-                });
+            // if (playerId === "player1"){
+            //     db2.ref(currentRoomKey).set({
+            //         player1Choice : choice,
+            //         playerChoiceCnt : 1
+            //     });
     
-            }else{
-                db2.ref(currentRoomKey).set({
-                    player2Choice : choice,
-                    playerChoiceCnt : 1
-                });
-            }
+            // }else{
+            //     db2.ref(currentRoomKey).set({
+            //         player2Choice : choice,
+            //         playerChoiceCnt : 1
+            //     });
+            // }
 
 
             setTimeout(function(){ 

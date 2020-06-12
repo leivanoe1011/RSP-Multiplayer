@@ -76,30 +76,75 @@
         loadMessage(snapshot);
     })
 
-    // if the player choice count is back to 0 then remove Disable class
-    // from form and submit button
-    db2.ref(currentRoomKey + "/playerChoiceCnt").on("value", function(snapshot){
 
-        if(currentRoomKey == null){
+    db2.ref(currentRoomKey + "/player1Waiting").on("value", function(snapshot){
+
+        var player1Waiting = snapshot.val();
+        var player2Waiting = 0;
+
+        if(currentRoomKey === null){
             return;
         }
 
-        console.log("reset submit form and button");
-        console.log(snapshot);
-
-        var choiceCnt = snapshot.val();
-
-        console.log("Choice Count Handler");
-        console.log(choiceCnt);
-
-        if(choiceCnt === 2){
-            db2.ref(currentRoomKey).update({
-                player1Choice: "", 
-                player1Waiting: 0, // Used to flag which player is waiting
-                player2Choice: "",
-                player2Waiting: 0, // Used to flag which player is waiting
-                playerChoiceCnt: 0 // Reflects if both users have entered an answer
+        if(currentRoomKey !== null){
+            db2.ref(currentRoomKey + "/player2Waiting").once("value", function(snapshot){
+                player2Waiting = snapshot.val();
             })
+        }
+
+        if(player1Waiting === 1 && player2Waiting === 1){
+            console.log("updating the player choice cnt in playerChoiceCnt trigger");
+
+            var player1Wins = 0;
+            var player2Wins = 0;
+            var player1Choice = "";
+            var player2Choice = "";
+
+            // We don't care about our own choice
+            // Need to validate we are currently in a room
+            if (currentRoomKey !== null){
+                db2.ref(currentRoomKey).once("value", function(snapshot){
+            
+                    if(snapshot.child("player1Wins").exists() 
+                        && snapshot.child("player2Wins").exists() ){
+                            
+                            var currentObj = snapshot.val();
+                            player1Wins = currentObj.player1Wins;
+                            player2Wins = currentObj.player2Wins;
+                            player1Choice = currentObj.player1Choice;
+                            player2Choice = currentObj.player2Choice;
+        
+                        }
+                })
+            }
+
+
+            // The logic below is only executed if Player 2 is waiting
+            var message = validateGameAnswers(player1Choice, player2Choice);
+
+            if (message === 1){
+                console.log("Player 1 won");
+                player1Wins++;
+            }
+            else {
+                console.log("Player 2 won");
+                player2Wins++;
+            }
+
+
+            if (currentRoomKey !== null){
+                console.log("In player1Choice trigger");
+
+                db2.ref(currentRoomKey).update({
+
+                    player1Wins: player1Wins,
+                    player2Wins: player2Wins,
+                    player1Choice: "", 
+                    player1Waiting: 0, // Used to flag which player is waiting
+                    player2Choice: "",
+                    player2Waiting: 0 // Used to flag which player is waiting
+                })
+            }
 
             resetApp();
         }
@@ -107,167 +152,79 @@
     })
 
 
-    // Get the Player Choice
-    db2.ref(currentRoomKey + "/player1Choice").on("value", function(snapshot){
-        
-        var isWaiting = 0;
+    db2.ref(currentRoomKey + "/player2Waiting").on("value", function(snapshot){
 
-        db2.ref(currentRoomKey + "/player1Waiting").once("value", function(snapshot){
-            isWaiting = snapshot.val();
-        });
+        var player2Waiting = snapshot.val();
+        var player1Waiting = 0;
 
-        // Are we waiting for an answer
-        if (isWaiting === 0){
-            return;
-        }
-
-        // Do we have a Room key
         if(currentRoomKey === null){
             return;
         }
 
-        console.log("In Player 1 Choice firebase trigger");
-
-        var player1Choice = snapshot.val();
-        var myChoice = $("#choice").val();
-
-        var player1Wins = 0;
-        var player2Wins = 0;
-
-        // We don't care about our own choice
-        // Need to validate we are currently in a room
-        if (currentRoomKey !== null){
-            db2.ref(currentRoomKey).once("value", function(snapshot){
-           
-                if(snapshot.child("player1Wins").exists() 
-                    && snapshot.child("player2Wins").exists() ){
-                        
-                        var currentObj = snapshot.val();
-                        player1Wins = currentObj.player1Wins;
-                        player2Wins = currentObj.player2Wins;
-    
-                    }
+        if(currentRoomKey !== null){
+            db2.ref(currentRoomKey + "/player2Waiting").once("value", function(snapshot){
+                player1Waiting = snapshot.val();
             })
         }
 
-        console.log(player1Choice);
 
-        // We don't care about our own choice
-        if(playerId === "player1"){
-            return
-        }
-        else{
-            // Here player 2 is waiting for Player 1
-            var message = validateGameAnswers(player1Choice, myChoice);
+        if(player1Waiting === 1 && player2Waiting === 1){
+            console.log("updating the player choice cnt in playerChoiceCnt trigger");
 
-            var opponentChoice = player1Choice;
+            var player1Wins = 0;
+            var player2Wins = 0;
+            var player1Choice = "";
+            var player2Choice = "";
 
-            var playerChoiceCnt = 0;
+            // We don't care about our own choice
+            // Need to validate we are currently in a room
+            if (currentRoomKey !== null){
+                db2.ref(currentRoomKey).once("value", function(snapshot){
+            
+                    if(snapshot.child("player1Wins").exists() 
+                        && snapshot.child("player2Wins").exists() ){
+                            
+                            var currentObj = snapshot.val();
+                            player1Wins = currentObj.player1Wins;
+                            player2Wins = currentObj.player2Wins;
+                            player1Choice = currentObj.player1Choice;
+                            player2Choice = currentObj.player2Choice;
+        
+                        }
+                })
+            }
 
-            db2.ref(currentRoomKey + "/playerChoiceCnt").once("value", function(snapshot){
-                playerChoiceCnt = snapshot.val();
-            })
+
+            // The logic below is only executed if Player 2 is waiting
+            var message = validateGameAnswers(player1Choice, player2Choice);
 
             if (message === 1){
                 console.log("Player 1 won");
                 player1Wins++;
             }
             else {
+                console.log("Player 2 won");
                 player2Wins++;
             }
 
+
             if (currentRoomKey !== null){
+                console.log("In player1Choice trigger");
+
                 db2.ref(currentRoomKey).update({
+
                     player1Wins: player1Wins,
-                    player2Wins: player2Wins
+                    player2Wins: player2Wins,
+                    player1Choice: "", 
+                    player1Waiting: 0, // Used to flag which player is waiting
+                    player2Choice: "",
+                    player2Waiting: 0 // Used to flag which player is waiting
                 })
             }
 
-            // At Choice Cnt == 0 remove the Disable class from 
-            // the Submit button and clear choice
-
-        }
-    })
-
-    db2.ref(currentRoomKey + "/player2Choice").on("value", function(snapshot){
-
-        var waiting = 0;
-
-        // Validate if its a legitimate entry by the player
-        db2.ref(currentRoomKey + "/player2Waiting").once("value", function(snapshot){
-            waiting = snapshot.val();
-        });
-
-        // Are we waiting for an answer
-        if(waiting === 0){
-            return;
-        }
-
-         // Do we have a Room key
-        if(currentRoomKey === null){
-            return;
-        }
-
-        console.log("In Player 2 Choice firebase trigger");
-        
-        var player2Choice = snapshot.val();
-        var myChoice = $("#choice").val();
-
-
-        var player1Wins = 0;
-        var player2Wins = 0;
-
-
-        // We don't care about our own choice
-        // Need to validate we are currently in a room
-        if (currentRoomKey !== null){
-            db2.ref(currentRoomKey).once("value", function(snapshot){
-           
-                if(snapshot.child("player2Wins").exists() 
-                    && snapshot.child("player2Wins").exists() ){
-                        
-                        var currentObj = snapshot.val();
-                        player1Wins = currentObj.player1Wins;
-                        player2Wins = currentObj.player2Wins;
-    
-                    }
-            })
+            resetApp();
         }
         
-
-        if(playerId === "player2"){
-            return
-        }
-        else{
-            // Here player 1 is waiting for Player 2
-            var message = validateGameAnswers(myChoice, player2Choice);
-
-            var opponentChoice = player2Choice;
-
-            var playerChoiceCnt = 0;
-
-            db2.ref(currentRoomKey + "/playerChoiceCnt").once("value", function(snapshot){
-                playerChoiceCnt = snapshot.val();
-            })
-
-            if (message === 1){
-                console.log("Player 1 won");
-                player1Wins++;
-            }
-            else {
-                player2Wins++;
-            }
-
-            if (currentRoomKey !== null){
-                db2.ref(currentRoomKey).update({
-                    player1Wins: player1Wins,
-                    player2Wins: player2Wins
-                })
-            }
-
-            // At Choice Cnt == 0 remove the Disable class from 
-            // the Submit button and clear choice
-        }
     })
 
 
@@ -294,40 +251,37 @@
 
         waitingForOpponent();
 
-        var playerChoiceCnt = 0;
-
-        db2.ref(currentRoomKey + "/playerChoiceCnt").once("value", function(snapshot){
-            playerChoiceCnt = snapshot.val();
-        })
-
-        playerChoiceCnt = playerChoiceCnt + 1;
-
-        console.log("Player Choice Cnt");
-        console.log(playerChoiceCnt);
 
         // Load the input to Firebase
         if (playerId === "player1"){
+            
+            console.log("In Player 1 Submit Answer");
+
             db2.ref(currentRoomKey).once("value", function(snapshot){
                 if(snapshot.child("player1Choice").exists() 
                     && snapshot.child("player1Waiting").exists() 
                     && snapshot.child("playerChoiceCnt").exists()){
                         db2.ref(currentRoomKey).update({
                             player1Choice : choice,
-                            player1Waiting: 1,
-                            playerChoiceCnt : playerChoiceCnt
+                            player1Waiting: 1
                         });
+
+
                     }
             })
         }else{
+            
+            console.log("In Player 2 Submit Answer");
+
             db2.ref(currentRoomKey).once("value", function(snapshot){
                 if(snapshot.child("player2Choice").exists() 
                     && snapshot.child("player2Waiting").exists() 
                     && snapshot.child("playerChoiceCnt").exists()){
                         db2.ref(currentRoomKey).update({
                             player2Choice : choice,
-                            player2Waiting: 1,
-                            playerChoiceCnt : playerChoiceCnt
+                            player2Waiting: 1                       
                         });
+
                     }
             })
         }
@@ -491,6 +445,171 @@
     //     }
         
     // })
+
+
+
+
+    // // This trigger exists to let Player 2 know, Player 1 made a choice
+    // db2.ref(currentRoomKey + "/player1Choice").on("value", function(snapshot){
+        
+    //     var isWaiting = 0;
+
+    //     db2.ref(currentRoomKey + "/player1Waiting").once("value", function(snapshot){
+    //         isWaiting = snapshot.val();
+    //     });
+ 
+
+    //     // Are we waiting for an answer
+    //     if (isWaiting === 0){
+    //         return;
+    //     }
+
+    //     // Do we have a Room key
+    //     if(currentRoomKey === null){
+    //         return;
+    //     }
+
+    //     // We don't care about our own choice
+    //     if(playerId === "player1"){
+    //         console.log("Return because Player 1. In Player 1 choice")
+    //         return
+    //     }
+
+    //     console.log("In Player 1 Choice firebase trigger");
+
+    //     var player1Choice = snapshot.val();
+    //     var myChoice = $("#choice").val(); // player 2 choice
+
+    //     var player1Wins = 0;
+    //     var player2Wins = 0;
+
+    //     // We don't care about our own choice
+    //     // Need to validate we are currently in a room
+    //     if (currentRoomKey !== null){
+    //         db2.ref(currentRoomKey).once("value", function(snapshot){
+           
+    //             if(snapshot.child("player1Wins").exists() 
+    //                 && snapshot.child("player2Wins").exists() ){
+                        
+    //                     var currentObj = snapshot.val();
+    //                     player1Wins = currentObj.player1Wins;
+    //                     player2Wins = currentObj.player2Wins;
+    
+    //                 }
+    //         })
+    //     }
+
+    //     console.log(player1Choice);
+
+        
+    //     // The logic below is only executed if Player 2 is waiting
+    //     var message = validateGameAnswers(player1Choice, myChoice);
+
+    //     if (message === 1){
+    //         console.log("Player 1 won");
+    //         player1Wins++;
+    //     }
+    //     else {
+    //         player2Wins++;
+    //     }
+
+
+    //     if (currentRoomKey !== null){
+    //         console.log("In player1Choice trigger");
+
+    //         db2.ref(currentRoomKey).update({
+
+    //             player1Wins: player1Wins,
+    //             player2Wins: player2Wins
+    //         })
+    //     }
+
+    //     // At Choice Cnt == 0 remove the Disable class from 
+    //     // the Submit button and clear choice
+
+        
+    // })
+
+
+    // // This trigger exists to let Player 1 know, Player 2 made a choice
+    // db2.ref(currentRoomKey + "/player2Choice").on("value", function(snapshot){
+
+    //     var waiting = 0;
+
+    //     // Validate if its a legitimate entry by the player
+    //     db2.ref(currentRoomKey + "/player2Waiting").once("value", function(snapshot){
+    //         waiting = snapshot.val();
+    //     });
+
+
+    //     // Are we waiting for an answer
+    //     if(waiting === 0){
+    //         return;
+    //     }
+
+    //      // Do we have a Room key
+    //     if(currentRoomKey === null){
+    //         return;
+    //     }
+
+    //     console.log("In Player 2 Choice firebase trigger");
+        
+    //     var player2Choice = snapshot.val();
+    //     var myChoice = $("#choice").val();
+
+
+    //     var player1Wins = 0;
+    //     var player2Wins = 0;
+
+
+    //     // We don't care about our own choice
+    //     // Need to validate we are currently in a room
+    //     if (currentRoomKey !== null){
+    //         db2.ref(currentRoomKey).once("value", function(snapshot){
+           
+    //             if(snapshot.child("player1Wins").exists() 
+    //                 && snapshot.child("player2Wins").exists() ){
+                        
+    //                     var currentObj = snapshot.val();
+    //                     player1Wins = currentObj.player1Wins;
+    //                     player2Wins = currentObj.player2Wins;
+    
+    //                 }
+    //         })
+    //     }
+        
+
+    //     if(playerId === "player2"){
+    //         return
+    //     }
+    //     else{
+    //         // Here player 1 is waiting for Player 2
+    //         var message = validateGameAnswers(myChoice, player2Choice);
+
+    //         var opponentChoice = player2Choice;
+
+
+    //         if (message === 1){
+    //             console.log("Player 1 won");
+    //             player1Wins++;
+    //         }
+    //         else {
+    //             player2Wins++;
+    //         }
+
+    //         if (currentRoomKey !== null){
+    //             console.log("In player2Choice trigger");
+    //             db2.ref(currentRoomKey).update({
+    //                 player1Wins: player1Wins,
+    //                 player2Wins: player2Wins
+    //             })
+    //         }
+
+    //         // At Choice Cnt == 0 remove the Disable class from 
+    //         // the Submit button and clear choice
+    //     }
+    // })
+
 
 
 
