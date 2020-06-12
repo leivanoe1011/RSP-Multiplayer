@@ -176,8 +176,7 @@
             if (currentRoomKey !== null){
                 db2.ref(currentRoomKey).update({
                     player1Wins: player1Wins,
-                    player2Wins: player2Wins,
-                    playerChoiceCnt: playerChoiceCnt++
+                    player2Wins: player2Wins
                 })
             }
 
@@ -259,8 +258,7 @@
             if (currentRoomKey !== null){
                 db2.ref(currentRoomKey).update({
                     player1Wins: player1Wins,
-                    player2Wins: player2Wins,
-                    playerChoiceCnt: playerChoiceCnt++
+                    player2Wins: player2Wins
                 })
             }
 
@@ -293,6 +291,11 @@
 
         waitingForOpponent();
 
+        var playerChoiceCnt = 0;
+
+        db2.ref(currentRoomKey + "/playerChoiceCnt").once("value", function(snapshot){
+            playerChoiceCnt = snapshot.val();
+        })
 
         // Load the input to Firebase
         if (playerId === "player1"){
@@ -303,7 +306,7 @@
                         db2.ref(currentRoomKey).update({
                             player1Choice : choice,
                             player1Waiting: 1,
-                            playerChoiceCnt : playerChoiceCnt + 1
+                            playerChoiceCnt : playerChoiceCnt++
                         });
                     }
             })
@@ -315,7 +318,7 @@
                         db2.ref(currentRoomKey).update({
                             player2Choice : choice,
                             player2Waiting: 1,
-                            playerChoiceCnt : playerChoiceCnt + 1
+                            playerChoiceCnt : playerChoiceCnt++
                         });
                     }
             })
