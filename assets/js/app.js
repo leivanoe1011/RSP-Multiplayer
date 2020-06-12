@@ -89,6 +89,9 @@
 
         var choiceCnt = snapshot.val();
 
+        console.log("Choice Count Handler");
+        console.log(choiceCnt);
+
         if(choiceCnt === 2){
             db2.ref(currentRoomKey).update({
                 player1Choice: "", 
@@ -220,7 +223,7 @@
         if (currentRoomKey !== null){
             db2.ref(currentRoomKey).once("value", function(snapshot){
            
-                if(snapshot.child("player1Wins").exists() 
+                if(snapshot.child("player2Wins").exists() 
                     && snapshot.child("player2Wins").exists() ){
                         
                         var currentObj = snapshot.val();
@@ -297,6 +300,11 @@
             playerChoiceCnt = snapshot.val();
         })
 
+        playerChoiceCnt = playerChoiceCnt + 1;
+
+        console.log("Player Choice Cnt");
+        console.log(playerChoiceCnt);
+
         // Load the input to Firebase
         if (playerId === "player1"){
             db2.ref(currentRoomKey).once("value", function(snapshot){
@@ -306,7 +314,7 @@
                         db2.ref(currentRoomKey).update({
                             player1Choice : choice,
                             player1Waiting: 1,
-                            playerChoiceCnt : playerChoiceCnt++
+                            playerChoiceCnt : playerChoiceCnt
                         });
                     }
             })
@@ -318,7 +326,7 @@
                         db2.ref(currentRoomKey).update({
                             player2Choice : choice,
                             player2Waiting: 1,
-                            playerChoiceCnt : playerChoiceCnt++
+                            playerChoiceCnt : playerChoiceCnt
                         });
                     }
             })
