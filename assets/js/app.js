@@ -79,6 +79,8 @@
 
     db2.ref(currentRoomKey + "/player1Waiting").on("value", function(snapshot){
 
+        console.log("In player 1 waiting listener");
+
         var player1Waiting = snapshot.val();
         var player2Waiting = 0;
 
@@ -91,6 +93,9 @@
                 player2Waiting = snapshot.val();
             })
         }
+
+        console.log("Player 1 Waiting Value " + player1Waiting);
+        console.log("Player 2 Waiting Value " + player2Waiting);
 
         if(player1Waiting === 1 && player2Waiting === 1){
             console.log("updating the player choice cnt in playerChoiceCnt trigger");
@@ -154,6 +159,8 @@
 
     db2.ref(currentRoomKey + "/player2Waiting").on("value", function(snapshot){
 
+        console.log("In player 2 waiting listener");
+
         var player2Waiting = snapshot.val();
         var player1Waiting = 0;
 
@@ -162,11 +169,13 @@
         }
 
         if(currentRoomKey !== null){
-            db2.ref(currentRoomKey + "/player2Waiting").once("value", function(snapshot){
+            db2.ref(currentRoomKey + "/player1Waiting").once("value", function(snapshot){
                 player1Waiting = snapshot.val();
             })
         }
 
+        console.log("Player 2 waiting value " + player2Waiting);
+        console.log("Player 1 waiting value " + player1Waiting);
 
         if(player1Waiting === 1 && player2Waiting === 1){
             console.log("updating the player choice cnt in playerChoiceCnt trigger");
