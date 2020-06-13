@@ -114,7 +114,7 @@ function validateGameAnswers(player1, player2){
 
 
 function resetApp(){
-    $("#loadingContainer").empty();
+    // $("#loadingContainer").empty();
     $("#submit").removeClass("disabled");
     $("#choice").val(' ');
 }

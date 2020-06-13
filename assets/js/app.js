@@ -77,6 +77,7 @@
     })
 
 
+    // Validate if both users have entered their Guess
     db2.ref(currentRoomKey + "/player1Waiting").on("value", function(snapshot){
 
         console.log("In player 1 waiting listener");
@@ -144,6 +145,7 @@
 
                 db2.ref(currentRoomKey).update({
 
+                    resetApp: 1,
                     player1Wins: player1Wins,
                     player2Wins: player2Wins,
                     player1Choice: "", 
@@ -159,6 +161,7 @@
     })
 
 
+    // Validate if both users have entered their Guess
     db2.ref(currentRoomKey + "/player2Waiting").on("value", function(snapshot){
 
         console.log("In player 2 waiting listener");
@@ -227,6 +230,9 @@
 
                 db2.ref(currentRoomKey).update({
 
+                    // Here need to figure out if I can add a new column to drive the 
+                    // RESET APP function
+                    resetApp: 1,
                     player1Wins: player1Wins,
                     player2Wins: player2Wins,
                     player1Choice: "", 
@@ -236,6 +242,8 @@
                 })
             }
 
+            //  I can remove this and when I update the Player Wins, I can have 
+            // an event listener to run this for both App Instances
             resetApp();
         }
         
