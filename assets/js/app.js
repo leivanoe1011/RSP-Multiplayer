@@ -94,8 +94,10 @@
             })
         }
 
-        console.log("Player 1 Waiting Value " + player1Waiting);
-        console.log("Player 2 Waiting Value " + player2Waiting);
+        console.log("Player 1 Waiting Value " );
+        console.log(player1Waiting);
+        console.log("Player 2 Waiting Value " );
+        console.log(player2Waiting);
 
         if(player1Waiting === 1 && player2Waiting === 1){
             console.log("updating the player choice cnt in playerChoiceCnt trigger");
@@ -174,8 +176,11 @@
             })
         }
 
-        console.log("Player 2 waiting value " + player2Waiting);
-        console.log("Player 1 waiting value " + player1Waiting);
+        console.log("Player 2 Waiting Value " );
+        console.log(player2Waiting);
+        console.log("Player 1 Waiting Value " );
+        console.log(player1Waiting);
+        
 
         if(player1Waiting === 1 && player2Waiting === 1){
             console.log("updating the player choice cnt in playerChoiceCnt trigger");
