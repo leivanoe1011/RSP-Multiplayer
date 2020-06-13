@@ -66,6 +66,13 @@
     var db2 = firebase.database(app);
 
 
+    db2.ref(currentRoomKey + "/resetApp").on("value", function(snapshot){
+        console.log("in reset app listener");
+
+        resetApp();
+    })
+
+
     // Event listener when new messages are pushed to Firebase
     db2.ref(currentRoomKey + "/messages").on("value", function(snapshot){
         
@@ -155,7 +162,7 @@
                 })
             }
 
-            resetApp();
+            
         }
         
     })
@@ -242,9 +249,7 @@
                 })
             }
 
-            //  I can remove this and when I update the Player Wins, I can have 
-            // an event listener to run this for both App Instances
-            resetApp();
+            
         }
         
     })
