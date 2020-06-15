@@ -158,7 +158,8 @@
                     player1Choice: "", 
                     player1Waiting: 0, // Used to flag which player is waiting
                     player2Choice: "",
-                    player2Waiting: 0 // Used to flag which player is waiting
+                    player2Waiting: 0, // Used to flag which player is waiting
+                    playerChoiceCnt: 2
                 })
             }
 
@@ -245,7 +246,8 @@
                     player1Choice: "", 
                     player1Waiting: 0, // Used to flag which player is waiting
                     player2Choice: "",
-                    player2Waiting: 0 // Used to flag which player is waiting
+                    player2Waiting: 0, // Used to flag which player is waiting
+                    playerChoiceCnt: 2
                 })
             }
 
@@ -266,7 +268,11 @@
 
         choice = choice.toLowerCase();
 
+        console.log(choice);
+
         var isChoiceValid = gameOptions.includes(choice);
+
+        console.log(isChoiceValid);
 
         if(!isChoiceValid){
             alert("Please be sure to select an option between P(paper), S(scissor), R(rock)");
