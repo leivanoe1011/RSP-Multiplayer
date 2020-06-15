@@ -74,7 +74,7 @@
     // Event listener when new messages are pushed to Firebase
     db2.ref(currentRoomKey + "/messages").on("value", function(snapshot){
         
-        if(currentRoomKey == null){
+        if(currentRoomKey === null){
             return;
         }
 
@@ -85,14 +85,16 @@
     // Validate if both users have entered their Guess
     db2.ref(currentRoomKey + "/player1Waiting").on("value", function(snapshot){
 
+        if(currentRoomKey === null){
+            return;
+        }
+
+
         console.log("In player 1 waiting listener");
 
         var player1Waiting = snapshot.val();
         var player2Waiting = 0;
 
-        if(currentRoomKey === null){
-            return;
-        }
 
         if(currentRoomKey !== null){
             db2.ref(currentRoomKey + "/player2Waiting").once("value", function(snapshot){
@@ -148,8 +150,9 @@
             if (currentRoomKey !== null){
                 console.log("In player1Choice trigger");
 
-                db2.ref(currentRoomKey).update({
+                var makeUpdate = db2.ref(currentRoomKey);
 
+                makeUpdate.update({
                     resetApp: 1,
                     player1Wins: player1Wins,
                     player2Wins: player2Wins,
@@ -159,6 +162,7 @@
                     player2Waiting: 0, // Used to flag which player is waiting
                     playerChoiceCnt: 2
                 })
+
             }
 
             
@@ -234,7 +238,9 @@
             if (currentRoomKey !== null){
                 console.log("In player1Choice trigger");
 
-                db2.ref(currentRoomKey).update({
+                var makeUpdate = db2.ref(currentRoomKey);
+
+                makeUpdate.update({
 
                     // Here need to figure out if I can add a new column to drive the 
                     // RESET APP function
