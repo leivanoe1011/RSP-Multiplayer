@@ -22,8 +22,6 @@
 
     
 
-    var gameOptions = ["p","s","r"];
-
     var gameRooms = [];
 
     var emptyMessage = [""]
@@ -264,17 +262,11 @@
         // and sending it in a URL string
         event.preventDefault();
 
-        var choice = $("#choice").val();
+        var gameOptions = ["p","s","r"];
 
-        choice = choice.toLowerCase();
+        var choice = $("#choice").val().trim().toLowerCase();
 
-        console.log(choice);
-
-        var isChoiceValid = gameOptions.includes(choice);
-
-        console.log(isChoiceValid);
-
-        if(!isChoiceValid){
+        if(!(gameOptions.includes(choice))){
             alert("Please be sure to select an option between P(paper), S(scissor), R(rock)");
             $("#choice").val(' ');
 

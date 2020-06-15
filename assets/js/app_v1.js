@@ -1,4 +1,4 @@
-    
+
 
         // Each ocurrence of the app will track the score of the current user. 
         // Player 1 has won ......
@@ -457,5 +457,30 @@
     // })
 
         
+
+
+    // console.log(choice);
+    // console.log(typeof choice);
+    // console.log(gameOptions);
+
+    // // var isChoiceValid = gameOptions.includes(choice);
+
+    // var isChoiceValid = false
+
+    // for(var i = 0; i < gameOptions.length; i++){
+        
+    //     var option = gameOptions[i];
+    //     console.log("In for loop");
+    //     console.log(option);
+    //     console.log(typeof option);
+        
+    //     if(option === choice){
+    //         console.log("in true loop")
+    //         isChoiceValid = true;
+    //         // break;
+    //     }
+    // }
+
+    // console.log(isChoiceValid);
 
         
