@@ -65,7 +65,7 @@
 
 
     if(currentRoomKey !== null){
-        
+
         const dbRefObj = db2.ref().child(currentRoomKey);
         const dbRefMessage = dbRefObj.child("messages");
         const dbRefPlayer1 = dbRefObj.child("player1Waiting");
@@ -80,6 +80,7 @@
         
         // Validate if both users have entered their Guess
         dbRefPlayer1.on("value", snap => {
+            
             if(currentRoomKey === null){
                 return;
             }
@@ -87,7 +88,7 @@
     
             console.log("In player 1 waiting listener");
     
-            var player1Waiting = snapshot.val();
+            var player1Waiting = snap.val();
             var player2Waiting = 0;
     
     
@@ -107,7 +108,7 @@
            
             console.log("In player 2 waiting listener");
     
-            var player2Waiting = snapshot.val();
+            var player2Waiting = snap.val();
             var player1Waiting = 0;
     
             if(currentRoomKey === null){

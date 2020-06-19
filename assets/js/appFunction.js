@@ -205,7 +205,7 @@ function compareAnswers(player1Waiting, player2Waiting){
 
         }
 
-        
+        resetApp();
     }
-    
+    // End of IF
 }
