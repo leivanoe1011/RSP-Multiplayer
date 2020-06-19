@@ -64,70 +64,67 @@
     var db2 = firebase.database(app);
 
 
-    db2.ref(currentRoomKey + "/resetApp").on("value", function(snapshot){
-        console.log("in reset app listener");
-
-        resetApp();
-    })
-
-
-    const dbRefObj = db2.ref().child(currentRoomKey);
-    const dbRefMessage = dbRefObj.child("messages");
-    const dbRefPlayer1 = dbRefObj.child("player1Waiting");
-    const dbRefPlayer2 = dbRefObj.child("player2Waiting");
-
-    // Event listener when new messages are pushed to Firebase
-    dbRefMessage.on("value", snap => {
-        var messageVal = snap.val(); // Not sure if I'll need this or not
-        loadMessage(snap);
-    })
-
-    
-    // Validate if both users have entered their Guess
-    dbRefPlayer1.on("value", snap => {
-        if(currentRoomKey === null){
-            return;
-        }
-
-
-        console.log("In player 1 waiting listener");
-
-        var player1Waiting = snapshot.val();
-        var player2Waiting = 0;
-
-
-        if(currentRoomKey !== null){
-            db2.ref(currentRoomKey + "/player2Waiting").once("value", function(snapshot){
-                player2Waiting = snapshot.val();
-            })
-        }
-
-        compareAnswers(player1Waiting, player2Waiting);
+    if(currentRoomKey !== null){
         
-    })
+        const dbRefObj = db2.ref().child(currentRoomKey);
+        const dbRefMessage = dbRefObj.child("messages");
+        const dbRefPlayer1 = dbRefObj.child("player1Waiting");
+        const dbRefPlayer2 = dbRefObj.child("player2Waiting");
     
-
-    // Validate if both users have entered their Guess
-    dbRefPlayer2.on("value", snap => {
-       
-        console.log("In player 2 waiting listener");
-
-        var player2Waiting = snapshot.val();
-        var player1Waiting = 0;
-
-        if(currentRoomKey === null){
-            return;
-        }
-
-        if(currentRoomKey !== null){
-            db2.ref(currentRoomKey + "/player1Waiting").once("value", function(snapshot){
-                player1Waiting = snapshot.val();
-            })
-        }
-
-        compareAnswers(player1Waiting, player2Waiting);   
+        // Event listener when new messages are pushed to Firebase
+        dbRefMessage.on("value", snap => {
+            var messageVal = snap.val(); // Not sure if I'll need this or not
+            loadMessage(snap);
+        })
+    
         
-    })
+        // Validate if both users have entered their Guess
+        dbRefPlayer1.on("value", snap => {
+            if(currentRoomKey === null){
+                return;
+            }
+    
+    
+            console.log("In player 1 waiting listener");
+    
+            var player1Waiting = snapshot.val();
+            var player2Waiting = 0;
+    
+    
+            if(currentRoomKey !== null){
+                db2.ref(currentRoomKey + "/player2Waiting").once("value", function(snapshot){
+                    player2Waiting = snapshot.val();
+                })
+            }
+    
+            compareAnswers(player1Waiting, player2Waiting);
+            
+        })
+        
+    
+        // Validate if both users have entered their Guess
+        dbRefPlayer2.on("value", snap => {
+           
+            console.log("In player 2 waiting listener");
+    
+            var player2Waiting = snapshot.val();
+            var player1Waiting = 0;
+    
+            if(currentRoomKey === null){
+                return;
+            }
+    
+            if(currentRoomKey !== null){
+                db2.ref(currentRoomKey + "/player1Waiting").once("value", function(snapshot){
+                    player1Waiting = snapshot.val();
+                })
+            }
+    
+            compareAnswers(player1Waiting, player2Waiting);   
+            
+        })
+    
+    }
 
 
     // Capture the input from the User
