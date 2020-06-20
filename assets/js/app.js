@@ -39,11 +39,8 @@
         player1Wins: 0,
         player2Wins: 0,
         messages: [],
-        player1Choice: "", 
-        player1Waiting: 0, // Used to flag which player is waiting
-        player2Choice: "",
-        player2Waiting: 0, // Used to flag which player is waiting
-        playerChoiceCnt: 0 // Reflects if both users have entered an answer
+        player1:"",
+        player2:""
     }
 
     // Your web app's Firebase configuration
@@ -64,23 +61,130 @@
     var db2 = firebase.database(app);
 
 
+
     if(currentRoomKey !== null){
+
 
         const dbRefObj = db2.ref().child(currentRoomKey);
         const dbRefMessage = dbRefObj.child("messages");
-        const dbRefPlayer1 = dbRefObj.child("player1Waiting");
-        const dbRefPlayer2 = dbRefObj.child("player2Waiting");
+        const dbRefPlayer1 = dbRefObj.child("player1");
+        const dbRefPlayer2 = dbRefObj.child("player2");
     
+
+        function removeChildren(){
+            dbRefPlayer1.once("value", snap => {
+                snap.forEach(childSnap =>{
+                    childSnap.remove();
+                })
+            })
+
+            dbRefPlayer2.once("value", snap => {
+                snap.forEach(childSnap =>{
+                    childSnap.remove();
+                })
+            })
+        }
+
+
+        // Not sure if I can add the Function within the Current Room Key IF statement
+        function compareAnswers(player1Waiting, player2Waiting){
+
+            console.log("Player 1 Waiting Value " );
+            console.log(player1Waiting);
+            console.log("Player 2 Waiting Value " );
+            console.log(player2Waiting);
+        
+            if(player1Waiting === 1 && player2Waiting === 1){
+                console.log("updating the player choice cnt in playerChoiceCnt trigger");
+        
+                var player1Wins = 0;
+                var player2Wins = 0;
+                var player1Choice = "";
+                var player2Choice = "";
+        
+                // We don't care about our own choice
+                // Need to validate we are currently in a room
+                if (currentRoomKey !== null){
+                    db2.ref(currentRoomKey).once("value", function(snapshot){
+                
+                        
+                        if(snapshot.child("player1Wins").exists() 
+                            && snapshot.child("player2Wins").exists() ){
+                                
+                                var currentObj = snapshot.val();
+                                player1Wins = currentObj.player1Wins;
+                                player2Wins = currentObj.player2Wins;
+            
+                            }
+                    })
+
+                    dbRefPlayer1.once("value" snap => {
+                        if (snap.child("player1Choice").exists()){
+                            player1Choice = snap.player1Choice;
+                        }
+                    });
+
+                    dbRefPlayer2.once("value" snap => {
+                        if (snap.child("player2Choice").exists()){
+                            player1Choice = snap.player1Choice;
+                        }
+                    });
+                }
+        
+        
+                // The logic below is only executed if Player 2 is waiting
+                var message = validateGameAnswers(player1Choice, player2Choice);
+        
+                if (message === 1){
+                    console.log("Player 1 won");
+                    player1Wins++;
+                }
+                else {
+                    console.log("Player 2 won");
+                    player2Wins++;
+                }
+        
+        
+                if (currentRoomKey !== null){
+                    console.log("In player1Choice trigger");
+        
+                    var makeUpdate = db2.ref(currentRoomKey);
+        
+                    makeUpdate.update({
+                        player1Wins: player1Wins,
+                        player2Wins: player2Wins,
+
+                    })
+        
+                }
+        
+                removeChildren();
+                resetApp();
+            }
+            // End of IF
+        }
+
+
         // Event listener when new messages are pushed to Firebase
-        dbRefMessage.on("value", snap => {
+        dbRefMessage.on("child_updated", snap => {
             var messageVal = snap.val(); // Not sure if I'll need this or not
             loadMessage(snap);
         })
     
-        
+
         // Validate if both users have entered their Guess
-        dbRefPlayer1.on("value", snap => {
-            
+        // I need to create a Player1 Child. 
+        // Within the Player1 I will have the following properties
+        // Player1Waiting
+        // Player1Choice
+        
+
+        // then we will create Firebase Listeners
+        // Child_Added
+        // Child_removed or updated are not necessary
+        // This will eliminate the noise of Firebase
+        dbRefPlayer1.on("child_added", snap => {
+
             if(currentRoomKey === null){
                 return;
             }
@@ -88,42 +192,50 @@
     
             console.log("In player 1 waiting listener");
     
-            var player1Waiting = snap.val();
+            var player1Waiting = 0;
             var player2Waiting = 0;
+
+            dbRefPlayer1.once("value", snap => {
+                var value = snap.val();
+                player1Waiting = value.player1Waiting;
+            })
     
-    
-            if(currentRoomKey !== null){
-                db2.ref(currentRoomKey + "/player2Waiting").once("value", function(snapshot){
-                    player2Waiting = snapshot.val();
-                })
-            }
+            dbRefPlayer2.once("value", snap => {
+                var value = snap.val();
+                player2Waiting = value.player2Waiting;
+            })
     
             compareAnswers(player1Waiting, player2Waiting);
             
         })
-        
-    
+
+
         // Validate if both users have entered their Guess
-        dbRefPlayer2.on("value", snap => {
+        dbRefPlayer2.on("child_added", snap => {
            
-            console.log("In player 2 waiting listener");
-    
-            var player2Waiting = snap.val();
-            var player1Waiting = 0;
-    
             if(currentRoomKey === null){
                 return;
             }
+
+            console.log("In player 2 waiting listener");
     
-            if(currentRoomKey !== null){
-                db2.ref(currentRoomKey + "/player1Waiting").once("value", function(snapshot){
-                    player1Waiting = snapshot.val();
-                })
-            }
+            var player1Waiting = 0;
+            var player2Waiting = 0;
+
+            dbRefPlayer1.once("value", snap => {
+                var value = snap.val();
+                player1Waiting = value.player1Waiting;
+            })
+    
+            dbRefPlayer2.once("value", snap => {
+                var value = snap.val();
+                player2Waiting = value.player2Waiting;
+            })
     
             compareAnswers(player1Waiting, player2Waiting);   
             
         })
+
     
     }
 
@@ -156,31 +268,25 @@
             console.log("In Player 1 Submit Answer");
 
             db2.ref(currentRoomKey).once("value", function(snapshot){
-                if(snapshot.child("player1Choice").exists() 
-                    && snapshot.child("player1Waiting").exists() 
-                    && snapshot.child("playerChoiceCnt").exists()){
-                        db2.ref(currentRoomKey).update({
-                            player1Choice : choice,
-                            player1Waiting: 1
-                        });
 
-
-                    }
+                if(snapshot.child("player1").exists()){
+                    db2.ref(currentRoomKey + "/player1").push({
+                        player1Choice : choice,
+                        player1Waiting: 1
+                    })
+                }
             })
         }else{
             
             console.log("In Player 2 Submit Answer");
 
             db2.ref(currentRoomKey).once("value", function(snapshot){
-                if(snapshot.child("player2Choice").exists() 
-                    && snapshot.child("player2Waiting").exists() 
-                    && snapshot.child("playerChoiceCnt").exists()){
-                        db2.ref(currentRoomKey).update({
-                            player2Choice : choice,
-                            player2Waiting: 1                       
-                        });
-
-                    }
+                if(snapshot.child("player2").exists()){
+                    db2.ref(currentRoomKey + "/player2").push({
+                        player2Choice : choice,
+                        player2Waiting: 1
+                    })
+                }
             })
         }
 
