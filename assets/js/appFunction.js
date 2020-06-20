@@ -11,11 +11,8 @@ function createNewGameRoom(roomName){
         player1Wins: 0,
         player2Wins: 0,
         messages: JSON.stringify(emptyMessage),
-        player1Choice: gameRoom.player1Choice,
-        player1Waiting: gameRoom.player1Waiting,
-        player2Choice: gameRoom.player2Choice,
-        player2Waiting: gameRoom.player2Waiting,
-        playerChoiceCnt: gameRoom.playerChoiceCnt
+        player1: gameRoom.player1,
+        player2: gameRoom.player2
     });
     
     myRef.push();
