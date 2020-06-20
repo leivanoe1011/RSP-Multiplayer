@@ -116,19 +116,21 @@
                                 player2Wins = currentObj.player2Wins;
             
                             }
+                    });
+
+                    
+                    dbRefPlayer1.once("value", snap => {
+                        if (snap.child("player1Choice").exists() ){
+                            player1Choice = snap.player1Choice;
+                        }
                     })
 
-                    dbRefPlayer1.once("value" snap => {
-                        if (snap.child("player1Choice").exists()){
+                    dbRefPlayer2.once("value", snap => {
+                        if (snap.child("player2Choice").exists() ){
                             player1Choice = snap.player1Choice;
                         }
-                    });
+                    })
 
-                    dbRefPlayer2.once("value" snap => {
-                        if (snap.child("player2Choice").exists()){
-                            player1Choice = snap.player1Choice;
-                        }
-                    });
                 }
         
         
