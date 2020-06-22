@@ -60,6 +60,10 @@
 
     var db2 = firebase.database(app);
 
+    var player1WinTotal = 0;
+
+    var player2WinTotal = 0;
+
 
 
     if(currentRoomKey !== null){
@@ -180,6 +184,9 @@
                             player2Wins: win2
                         })
     
+                        player1WinTotal = win1;
+
+                        player2WinTotal = win2;
                 
                         removeChildren();
                         resetApp();
