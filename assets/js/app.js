@@ -181,7 +181,7 @@
         // Child_Added
         // Child_removed or updated are not necessary
         // This will eliminate the noise of Firebase
-        dbRefPlayer1.on("child_changed", snap => {
+        dbRefPlayer1.on("child_added", snap => {
 
             if(currentRoomKey === null){
                 return;
@@ -209,7 +209,7 @@
 
 
         // Validate if both users have entered their Guess
-        dbRefPlayer2.on("child_changed", snap => {
+        dbRefPlayer2.on("child_added", snap => {
            
             console.log("In player 2 child changed");
 
