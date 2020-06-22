@@ -187,7 +187,7 @@
         // Child_Added
         // Child_removed or updated are not necessary
         // This will eliminate the noise of Firebase
-        dbRefPlayer1.on("child_added", snap => {
+        dbRefPlayer1.on('child_added', snap => {
 
             console.log("In player 1 waiting listener");
 
@@ -200,13 +200,17 @@
             var player2Waiting = 0;
 
             dbRefPlayer1.once("value", snapshot => {
+
                 var value = snapshot.val();
                 player1Waiting = value.player1Waiting;
             })
     
             dbRefPlayer2.once("value", snapshot => {
-                var value = snapshot.val();
-                player2Waiting = value.player2Waiting;
+                if(snapshot.child("player2Waiting").exists()){
+                    var value = snapshot.val();
+                    player2Waiting = value.player2Waiting;
+                }
+                
             })
     
             compareAnswers(player1Waiting, player2Waiting);
@@ -215,7 +219,7 @@
 
 
         // Validate if both users have entered their Guess
-        dbRefPlayer2.on("child_added", snap => {
+        dbRefPlayer2.on('child_added', snap => {
            
             console.log("In player 2 child changed");
 
@@ -229,8 +233,10 @@
             var player2Waiting = 0;
 
             dbRefPlayer1.once("value", snap => {
-                var value = snap.val();
-                player1Waiting = value.player1Waiting;
+                if(snapshot.child("player1Waiting").exists()){
+                    var value = snap.val();
+                    player1Waiting = value.player1Waiting;
+                }
             })
     
             dbRefPlayer2.once("value", snap => {
@@ -238,6 +244,7 @@
                 player2Waiting = value.player2Waiting;
             })
     
+            
             compareAnswers(player1Waiting, player2Waiting);   
             
         })
