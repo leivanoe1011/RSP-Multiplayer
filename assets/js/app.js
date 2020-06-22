@@ -72,17 +72,13 @@
     
 
         function removeChildren(){
-            dbRefPlayer1.once("value", snap => {
-                snap.forEach(childSnap =>{
-                    childSnap.remove();
-                })
-            })
 
-            dbRefPlayer2.once("value", snap => {
-                snap.forEach(childSnap =>{
-                    childSnap.remove();
-                })
-            })
+            dbRefPlayer1.ref("player1Choice").remove();
+            dbRefPlayer1.ref("player1Waiting").remove();
+
+            dbRefPlayer2.ref("player2Choice").remove();
+            dbRefPlayer2.ref("player2Waiting").remove();
+
         }
 
 
@@ -215,6 +211,8 @@
         // Validate if both users have entered their Guess
         dbRefPlayer2.on("child_changed", snap => {
            
+            console.log("In player 2 child changed");
+
             if(currentRoomKey === null){
                 return;
             }
