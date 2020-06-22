@@ -168,7 +168,7 @@
 
 
         // Event listener when new messages are pushed to Firebase
-        dbRefMessage.on("child_updated", snap => {
+        dbRefMessage.on("child_changed", snap => {
             var messageVal = snap.val(); // Not sure if I'll need this or not
             loadMessage(snap);
         })
@@ -185,7 +185,7 @@
         // Child_Added
         // Child_removed or updated are not necessary
         // This will eliminate the noise of Firebase
-        dbRefPlayer1.on("child_added", snap => {
+        dbRefPlayer1.on("child_changed", snap => {
 
             if(currentRoomKey === null){
                 return;
@@ -197,13 +197,13 @@
             var player1Waiting = 0;
             var player2Waiting = 0;
 
-            dbRefPlayer1.once("value", snap => {
-                var value = snap.val();
+            dbRefPlayer1.once("value", snapshot => {
+                var value = snapshot.val();
                 player1Waiting = value.player1Waiting;
             })
     
-            dbRefPlayer2.once("value", snap => {
-                var value = snap.val();
+            dbRefPlayer2.once("value", snapshot => {
+                var value = snapshot.val();
                 player2Waiting = value.player2Waiting;
             })
     
@@ -213,7 +213,7 @@
 
 
         // Validate if both users have entered their Guess
-        dbRefPlayer2.on("child_added", snap => {
+        dbRefPlayer2.on("child_changed", snap => {
            
             if(currentRoomKey === null){
                 return;
@@ -272,7 +272,7 @@
             db2.ref(currentRoomKey).once("value", function(snapshot){
 
                 if(snapshot.child("player1").exists()){
-                    db2.ref(currentRoomKey + "/player1").push({
+                    db2.ref(currentRoomKey + "/player1").set({
                         player1Choice : choice,
                         player1Waiting: 1
                     })
@@ -284,7 +284,7 @@
 
             db2.ref(currentRoomKey).once("value", function(snapshot){
                 if(snapshot.child("player2").exists()){
-                    db2.ref(currentRoomKey + "/player2").push({
+                    db2.ref(currentRoomKey + "/player2").set({
                         player2Choice : choice,
                         player2Waiting: 1
                     })
