@@ -73,6 +73,10 @@ function validateGameAnswers(player1, player2){
     
     var message = 0;
 
+    console.log(`validate game ans player 1 ${player1}`);
+    console.log(`validate game ans player 2 ${player2}`);
+    
+
     if(player2 === "p" && player1 === "s"){
         message = 1;
         console.log("player 1 wins");
@@ -110,12 +114,6 @@ function validateGameAnswers(player1, player2){
 }
 
 
-function resetApp(){
-    // $("#loadingContainer").empty();
-    $("#submit").removeClass("disabled");
-    $("#choice").val(' ');
-}
-
 function waitingForOpponent(){
     // Once the data is submitted, the user cannot enter a new value.
     // This will be removed once both users enter a value
@@ -135,5 +133,7 @@ function waitingForOpponent(){
     $(createSpinner).append(loading);
     $("#loadingContainer").append(createSpinner);
 }
+
+// {"player1Choice":"r", "player1Waiting":1}
 
 
