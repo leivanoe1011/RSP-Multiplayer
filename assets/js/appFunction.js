@@ -137,7 +137,11 @@ function waitingForOpponent(){
 
 function loadPlayerScore(){
 
+    console.log("In load player score");
+    
     var loadScoreContainer = $("#loadScore");
+    $(loadScoreContainer).empty();
+
     var currentPlayer = $("<p>");
     $(currentPlayer).html("<strong>Current Player: </strong> " + playerId);
 
@@ -151,6 +155,18 @@ function loadPlayerScore(){
     $(loadScoreContainer).append(player1Score);
     $(loadScoreContainer).append(player2Score);
 }
+
 // {"player1Choice":"r", "player1Waiting":1}
+
+// {"player1Choice":"p", "player1Waiting":1}
+
+// {"player1Choice":"s", "player1Waiting":1}
+
+
+
+
+
+
+
 
 

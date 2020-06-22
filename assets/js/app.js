@@ -189,6 +189,7 @@
                 
                         removeChildren();
                         resetApp();
+                        loadPlayerScore();
                     });
 
                     
@@ -295,9 +296,12 @@
 
             compareAnswers(player1Waiting, player2Waiting);   
             
+            
         })
 
 
+        // The child added does not work. 
+        // Value works better
         db2.ref(currentRoomKey + "/messages").on("value", snap =>{
             var messageVal = snap.val(); // Not sure if I'll need this or not
             
