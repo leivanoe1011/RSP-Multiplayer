@@ -73,11 +73,17 @@
 
         function removeChildren(){
 
-            dbRefPlayer1.ref("player1Choice").remove();
-            dbRefPlayer1.ref("player1Waiting").remove();
+            dbRefObj.child("player1/player1Choice").remove();
+            dbRefObj.child("player1/player1Waiting").remove();
 
-            dbRefPlayer2.ref("player2Choice").remove();
-            dbRefPlayer2.ref("player2Waiting").remove();
+            dbRefObj.child("player1/player1Choice").remove();
+            dbRefObj.child("player1/player1Waiting").remove();
+
+            // dbRefPlayer1.child("player1Choice").remove();
+            // dbRefPlayer1.child("player1Waiting").remove();
+
+            // dbRefPlayer2.child("player2Choice").remove();
+            // dbRefPlayer2.child("player2Waiting").remove();
 
         }
 
@@ -183,12 +189,12 @@
         // This will eliminate the noise of Firebase
         dbRefPlayer1.on("child_added", snap => {
 
+            console.log("In player 1 waiting listener");
+
             if(currentRoomKey === null){
                 return;
             }
-    
-    
-            console.log("In player 1 waiting listener");
+     
     
             var player1Waiting = 0;
             var player2Waiting = 0;
