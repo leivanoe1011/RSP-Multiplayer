@@ -134,6 +134,23 @@ function waitingForOpponent(){
     $("#loadingContainer").append(createSpinner);
 }
 
+
+function loadPlayerScore(){
+
+    var loadScoreContainer = $("#loadScore");
+    var currentPlayer = $("<p>");
+    $(currentPlayer).html("<strong>Current Player: </strong> " + playerId);
+
+    var player1Score = $("<p>");
+    $(player1Score).html("<strong>Player 1 Wins: </strong> " + player1WinTotal);
+
+    var player2Score = $("<p>");
+    $(player2Score).html("<strong>Player 2 Wins: </strong> " + player2WinTotal);
+
+    $(loadScoreContainer).append(currentPlayer);
+    $(loadScoreContainer).append(player1Score);
+    $(loadScoreContainer).append(player2Score);
+}
 // {"player1Choice":"r", "player1Waiting":1}
 
 

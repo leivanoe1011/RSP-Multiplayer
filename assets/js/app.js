@@ -73,7 +73,7 @@
         var dbRefMessage = dbRefObj.child("messages");
         var dbRefPlayer1 = dbRefObj.child("player1");
         var dbRefPlayer2 = dbRefObj.child("player2");
-    
+           
         
         function resetApp(){
 
@@ -116,7 +116,6 @@
                 console.log("updating the player choice cnt in playerChoiceCnt trigger");
 
         
-                // We don't care about our own choice
                 // Need to validate we are currently in a room
                 if (currentRoomKey !== null){
 
@@ -201,12 +200,6 @@
         }
 
 
-        // Event listener when new messages are pushed to Firebase
-        dbRefMessage.on("child_changed", snap => {
-            var messageVal = snap.val(); // Not sure if I'll need this or not
-            loadMessage(snap);
-        })
-    
         // Listen if the answer has changed
         dbRefPlayer1.on('child_added', snap => {
 
@@ -304,6 +297,16 @@
             
         })
 
+
+        db2.ref(currentRoomKey + "/messages").on("value", snap =>{
+            var messageVal = snap.val(); // Not sure if I'll need this or not
+            
+            console.log("In message value event handler");
+            console.log(messageVal);
+
+            loadMessage(snap);
+        })
+    
     
     }
 
@@ -391,6 +394,7 @@
 
         });
 
+        loadPlayerScore();
 
         $("#gameRoom").hide();
     })
@@ -450,6 +454,8 @@
             playerCount: 2
         });
 
+        loadPlayerScore();
+
         $("#gameRoom").hide();
     });
 
@@ -472,9 +478,20 @@
                 var player1Choice = obj.player1Choice;
                 var player2Choice = obj.player2Choice;
 
+                player1WinTotal = obj.player1Wins;
+                player2WinTotal = obj.player2Wins;
+
                 if (choiceCnt === 1){
                     waitingForOpponent()
                 }
+
+                loadPlayerScore();
+
+                db2.ref(currentRoomKey + "/messages").once("value", snap => {
+                    var messageVal = snap.val(); // Not sure if I'll need this or not
+                    loadMessage(snap);
+                });
+
             })
         }
 
