@@ -1,8 +1,24 @@
 
-#choiceContainer{
+/* #choiceContainer{
     margin-bottom: 50px;
 }
 
 #loadingContainer{
     margin-bottom: 50px;
+} */
+
+body{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    background-image: url("../images/rock\,_paper_larger.jpg");
+    background-size: 40%;
+}
+
+
+.jumbotron{
+    margin-top: 50px;
+    background-color: white;
+}
+
+.row{
+    margin: 10px;
 }
