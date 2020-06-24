@@ -21,22 +21,48 @@
 </head>
 <body>
 
-    <!-- Nav -->
+
     <div class="container">
+        <div class="jumbotron">
+            <h1 class="display-4">Paper Scissor Game</h1>
+            <p class="lead">The game will require for a choice between P, R, or S.</p>
+            <hr class="my-4">
+            <p>The game emphasizes on the utilization of storing and retrieving data from Firebase.</p>
+            <p class="lead">
+                <a class="btn btn-primary btn-lg" href="#" role="button" 
+                    data-toggle="collapse" data-target="#learnMoreCollapse" aria-expanded="false" aria-controls="learnMoreCollapse"
+                >Learn more</a>
+            </p>
+            <div class="card card-body collapse" id="learnMoreCollapse">
+                The application will take advantage of the Firebase methods and real time capabilities. 
+                Using firebase functions to retrieve data at will or when a user interacts with the application that submits 
+                data into the firebase server.
+                The following lessons were learned
+                <ul>
+                    <li>Event handler will run synchronously with other JS app functions</li>
+                    <li>The lesson above forced us to run app functions within Firebase Event Handlers</li>
+                    <li>We can chain firebase child objects with it's properties to create event handlers or only query specific data points</li>
 
+                </ul>
+                
+            </div>
+        </div>
     </div>
+  
 
-
+    <div class="container">
+        <div class="jumbotron jumbotron-fluid">
+            
     <!-- Join Game Room -->
     <div id="gameRoom" class="container">
         <!-- Begin Row -->
-        <div class="row d-flex justify-content-center">
+        <div class="row d-flex">
             <h3 class="col-sm-12 col-lg-12">Create a New Game Room</h3>
         </div>
         <!-- End Row -->
 
         <!-- Begin Row -->
-        <div class="row d-flex justify-content-center">   
+        <div class="row d-flex">   
             <form>
                 <div class="form-group">
                     <label for="choice">Room Name</label>
@@ -52,13 +78,13 @@
         <!-- End Row -->
 
         <!-- Begin Row -->
-        <div class="row d-flex justify-content-center">
+        <div class="row d-flex">
             <h3>Join Room</h3>
         </div>
         <!-- End Row -->
 
         <!-- Begin Row -->
-        <div class="row d-flex justify-content-center" id="joinRoom">
+        <div class="row d-flex" id="joinRoom">
 
         </div>
         <!-- End Row -->
@@ -68,7 +94,7 @@
 
     <!-- Input form -->
     <div class="container" id="choiceContainer">
-        <div class="row d-flex justify-content-center">
+        <div class="row d-flex">
             <form>
                 <div class="form-group">
                     <label for="choice">Select P, S, or R</label>
@@ -87,7 +113,7 @@
 
     <!-- Begin Load Score -->
     <div class="container">
-        <div  id="loadScore" class="row d-flex justify-content-center">
+        <div  id="loadScore" class="row d-flex">
 
         </div>
     </div>
@@ -97,7 +123,7 @@
     <!-- Loading Message -->
     <div class="container" >
 
-        <div id="loadingContainer" class="row d-flex justify-content-center">
+        <div id="loadingContainer" class="row d-flex">
 
         </div>
 
@@ -107,7 +133,7 @@
     <!-- Chat -->
     <div class="container" id="chatContainer">
 
-        <div class="row d-flex justify-content-center">
+        <div class="row d-flex">
             <div id="loadChat" class="col-sm-12 col-lg-8">
 
                 <form>
@@ -116,7 +142,7 @@
 
             </div>
         </div>
-        <div class="row d-flex justify-content-center">
+        <div class="row d-flex">
             <form>
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Type Message Here</label>
@@ -129,6 +155,10 @@
         </div>
         
     </div>
+        </div>
+    </div>
+       
+
 
 
     <!-- Jquery -->
@@ -148,8 +178,7 @@
     
         $('#createGameRoom').tooltip({ boundary: 'window' });
         $('#submit').tooltip({ boundary: 'window' });
-
-        
+        // $('.collapse').collapse();
 
     </script>
 </body>
