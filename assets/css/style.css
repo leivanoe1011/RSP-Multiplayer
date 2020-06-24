@@ -13,10 +13,19 @@ body{
     background-size: 40%;
 }
 
+/* This only changes this particular animation duration */
+.animate__animated.animate__backInLeft {
+    --animate-duration: 5s;
+  }
+
+.animate__animated.animate__backInRight {
+    --animate-duration: 8s;
+  }
 
 .jumbotron{
     margin-top: 50px;
     background-color: white;
+    animation-duration: 2s; /* don't forget to set a duration! */
 }
 
 .row{
